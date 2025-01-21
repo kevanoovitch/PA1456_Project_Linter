@@ -1,0 +1,16 @@
+@startuml classOverview 
+'Objects
+class scanner 
+class inputHandler 
+struct scanFor
+class outputResult
+'class batchHandler 'optional RQ
+'class dockerHandler 'optional RQ
+
+
+'Relations
+scanner -->  outputResult
+inputHandler --> scanner
+scanner *-- scanFor 
+
+@enduml
