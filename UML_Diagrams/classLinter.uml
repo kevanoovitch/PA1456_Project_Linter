@@ -1,16 +1,39 @@
 @startuml classOverview 
 'Objects
 class scanner 
-class inputHandler 
+class inputHandler {
+    <<Context>>
+    -bool isUrl()
+    -Strategy* StrategyInput
+    +bool getIsUrl()
+
+    
+}
+class typeURL{
+     {static} urlHelper()
+}
+class typeFolder{
+   
+    {static} folderHelper() 
+}
+abstract Strategy{
+    +virtual bool getIsUrl()
+    
+}
 struct scanFor
-class outputResult
+class TrafficLightUI
+struct resultsAttributes
 'class batchHandler 'optional RQ
 'class dockerHandler 'optional RQ
 
 
 'Relations
-scanner -->  outputResult
+scanner -->  TrafficLightUI
+resultsAttributes --|> TrafficLightUI
 inputHandler --> scanner
-scanner *-- scanFor 
+scanner <|-- scanFor
+Strategy -- inputHandler : Strategy Pattern
+Strategy <|-- typeURL
+Strategy <|-- typeFolder
 
 @enduml
