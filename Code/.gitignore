@@ -13,3 +13,9 @@
 # Ignore JetBrains IDE settings
 .idea/
 !.idea/.gitignore
+
+#ignore format file
+.clang.format
+
+#ignore build dir
+/build
