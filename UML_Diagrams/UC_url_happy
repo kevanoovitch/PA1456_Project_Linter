@@ -1,0 +1,34 @@
+@startuml url_happy
+
+skinparam participant {
+    BackgroundColor technology
+    
+}
+
+participant ":inputHandler" as in
+participant ":Strategy\n<<Abstract>>" as strat
+participant ":TypeURL" as url
+participant "Scanner" as scan  
+participant "trafficlight UI" as ui  
+
+-> in : inputHandler(str URL)
+activate in 
+in -> strat : isUrl == true
+deactivate in
+activate strat
+strat -> url 
+activate url
+deactivate strat
+url -> ui : setDownloadPath(str path)
+
+
+url -> scan : repository_ptr
+deactivate url
+activate scan
+scan -> ui : scanResults
+deactivate scan
+activate ui
+
+
+<--ui : result <<scanResults,DownloadPath>>
+@end

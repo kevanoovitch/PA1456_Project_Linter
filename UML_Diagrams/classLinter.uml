@@ -3,21 +3,34 @@
 class scanner 
 class inputHandler {
     <<Context>>
-    -bool isUrl()
-    -Strategy* StrategyInput
     +bool getIsUrl()
+    +git_repository *repo
+    +pickStrategy(str input)
+    +executeStrategy()
+    #input
+    #folderPath
+    -bool isUrl()
+    -bool processSuccess
+    -Strategy* StrategyInput
+    -argumentChecker()
 
     
 }
 class typeURL{
-     {static} urlHelper()
+    +typeURL(inputHandler *h) : requries a link to parent 
+    +processInput()
+    +getIsUrl()
+    -inputHandler *parentInputHandler
+
+    
 }
 class typeFolder{
    
-    {static} folderHelper() 
+     
 }
 abstract Strategy{
-    +virtual bool getIsUrl()
+    +virtual getIsUrl()
+    +virtual processInput()
     
 }
 struct scanFor

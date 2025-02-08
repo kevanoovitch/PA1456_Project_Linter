@@ -1,0 +1,61 @@
+# .clang-format
+---
+Language: Cpp
+# Start by basing on LLVM (you can also try Google or other presets).
+BasedOnStyle: LLVM
+
+# Indentation
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# How to handle braces. This approximates Stroustrup’s/K&R style where:
+# - The opening brace goes on its own line for functions, classes, structs, control statements
+# - The closing brace aligns with the controlling statement
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: true
+  AfterEnum: false         # Some prefer false so 'enum' braces stick to the next line
+  AfterFunction: true
+  AfterNamespace: false
+  AfterStruct: true
+  AfterUnion: true
+  BeforeCatch: true
+  BeforeElse: true
+  SplitEmptyFunction: false
+  SplitEmptyRecord: false
+
+# Keep short if/while/for statements from collapsing into one line.
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortBlocksOnASingleLine: false
+
+# Spaces around parentheses in control statements
+# Stroustrup often omits them in function calls but includes a space after if/while/for.
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: false
+
+# Break constructor initializer lists
+BreakConstructorInitializers: BeforeComma
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+SpaceBeforeCtorInitializerColon: true
+
+# Stroustrup doesn’t rely heavily on vertical alignment of parameters; you can adjust if needed.
+AlignTrailingComments: true
+AlignConsecutiveAssignments: false
+AlignConsecutiveDeclarations: false
+
+# If you want to ensure that ‘else if’ always splits into ‘else\nif’, use:
+# IndentWrappedFunctionNames: false  # can help with readability of function declarations
+
+# Keep some defaults for other spacing rules:
+SpacesInParentheses: false
+SpacesInAngles: false
+Cpp11BracedListStyle: true
+SpaceAfterCStyleCast: false
+SpaceBeforeAssignmentOperators: true
+
+# Sort includes (Stroustrup sometimes doesn’t emphasize strict alphabetical, but this is clang-format’s default).
+SortIncludes: true
+---
