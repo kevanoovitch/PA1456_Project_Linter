@@ -1,4 +1,24 @@
+# Ignore common temporary folders
+/shelf/
+/workspace.xml
 
-UML Diagrams/test.uml
+# Editor-based HTTP Client requests
+/httpRequests/
 
-UML_Diagrams/test.uml
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+
+# Ignore VS Code and JetBrains IDE settings
+/.vscode
+.idea/
+!.idea/.gitignore
+
+# Ignore formatting config file
+.clang-format
+
+# Ignore cloned repositories
+Code/Repository
+
+# Ignore UML diagram files (optional)
+UML_Diagrams/*.uml
