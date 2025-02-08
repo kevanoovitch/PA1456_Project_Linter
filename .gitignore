@@ -1,6 +1,15 @@
 
-UML Diagrams/test.uml
 
-UML_Diagrams/test.uml
+
+
+#ignore build files
+Code/build/
+
+#ignore 
+UML_Diagrams/*.png
+
+Code/Repository/*
+
+*.clang-format
 
 .vscode/
