@@ -2,4 +2,4 @@ This is my Project course where I am tasked to create a GitHub Linter utilizing 
 
 ![Class Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/classLinter.uml)
 
-![Sequence](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/classLinter.uml](https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/UC_url_happy))
+![Sequence](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/UC_url_happy.uml)
