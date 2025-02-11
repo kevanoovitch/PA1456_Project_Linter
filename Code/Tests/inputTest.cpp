@@ -1,6 +1,8 @@
 
+#include "fs.h"
 #include "inputHandler.h"
 #include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <string>
@@ -14,10 +16,39 @@ const std::string URL_REPO_MINIMAL =
     "github.com/kevanoovitch/-DV1697-OS-course";
 const std::string URL_REPO_SMALL_SIZE =
     "https://github.com/kevanoovitch/TimerApplication";
+const std::string REPOSITORY_PATH = "../Repository";
+const std::string TESTDIR_PATH = "../Tests/testDir";
 
 } // namespace TestArgs
 
 using namespace TestArgs;
+
+TEST(fsBasics, memberTest) {
+
+  fs filesys;
+  std::ofstream file;
+
+  file.open(TESTDIR_PATH + "/test.txt");
+  file.close();
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
+
+  filesys.clearDir(TESTDIR_PATH);
+
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), true);
+
+  file.open(TESTDIR_PATH + "/test.txt");
+  file.close();
+
+  std::istringstream simulatedNo("n");
+
+  filesys.checkAndClear(TESTDIR_PATH, simulatedNo);
+
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
+
+  std::istringstream simulatedYes("y");
+  filesys.checkAndClear(TESTDIR_PATH, simulatedYes);
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), true);
+}
 
 TEST(inputHandler, inputArgsTest) {
 
@@ -65,10 +96,16 @@ TEST(inputHandler, inputArgsTest) {
 TEST(typeURL, URLhandling) {
 
   inputHandler handler1;
+  fs filesys;
   handler1.pickStrategy(URL_REPO_SMALL_SIZE);
 
   ASSERT_EQ(typeid(*handler1.inputStrategy), typeid(typeURL))
       << "incorrect strategy picked";
+
+  if (filesys.isEmpty(REPOSITORY_PATH) != true) {
+
+    filesys.clearDir(REPOSITORY_PATH);
+  }
 
   handler1.executeStrategy();
 
@@ -87,14 +124,6 @@ int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
 
   int testResults = RUN_ALL_TESTS();
-
-  std::string response;
-  std::cout << "Do you want to remove the cloned repository? (y/n)"
-            << std::endl;
-  std::cin >> response;
-  if (response == "y") {
-    std::filesystem::remove_all(CLONE_TO);
-  }
 
   return testResults;
 

@@ -5,9 +5,13 @@ project(linter VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
+
+
 add_library(linterLib STATIC
     src/inputHandler.cpp
     src/app.cpp
+    src/fs.cpp
 )
 find_package(GTest REQUIRED)
 
@@ -33,12 +37,19 @@ message(STATUS "libgit2 libraries: ${LIBGIT2_LIBRARIES}")
 target_include_directories(linterLib PUBLIC ${LIBGIT2_INCLUDE_DIRS})
 target_link_libraries(linterLib PUBLIC ${LIBGIT2_LIBRARIES})
 
-# --- Switch out commented lines to switch from test and non-test exe. --- #
-# add_executable(linter
-# src/main.cpp
-# )
-# target_link_libraries(linter linterLib)
-add_executable(linterTests
-    Tests/inputTest.cpp
-)
-target_link_libraries(linterTests linterLib)
+
+
+
+
+# Define a manual toggle for testing mode
+set(ENABLE_TESTS ON)  # Change to ON if you want to build the test executable
+
+if(ENABLE_TESTS)
+    message(STATUS "Building test executable")
+    add_executable(linterTests Tests/inputTest.cpp)
+    target_link_libraries(linterTests linterLib)
+else()
+    message(STATUS "Building normal executable")
+    add_executable(linter src/main.cpp)
+    target_link_libraries(linter linterLib)
+endif()

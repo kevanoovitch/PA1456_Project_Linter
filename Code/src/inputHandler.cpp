@@ -80,7 +80,16 @@ void inputHandler::setInput(std::string in) { this->input = in; }
 
 void inputHandler::setProcessSuccess(bool flag) { this->processSuccess = flag; }
 
-void inputHandler::executeStrategy() { inputStrategy->proccessInput(); }
+void inputHandler::executeStrategy() {
+
+  if (isUrl == true) {
+    // Make sure the dir to clone to is empty.
+
+    inputStrategy->proccessInput();
+  } else {
+    inputStrategy->proccessInput();
+  }
+}
 
 std::string inputHandler::getInput() { return this->input; }
 
