@@ -1,13 +1,13 @@
-#include "fs.h"
+#include "fileManager.h"
 #include <iostream>
 
-void fs::clearDir(std::string path) {
+void fileManager::clearDir(std::string path) {
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
     std::filesystem::remove_all(entry.path());
   }
 }
 
-bool fs::isEmpty(std::string path) {
+bool fileManager::isEmpty(std::string path) {
   if (std::filesystem::is_empty(path) == true) {
     return true;
   }
@@ -15,7 +15,7 @@ bool fs::isEmpty(std::string path) {
   return false;
 }
 
-void fs::checkAndClear(std::string path, std::istream &in) {
+void fileManager::checkAndClear(std::string path, std::istream &in) {
 
   if (this->isEmpty(path) != true) {
     std::string response;
@@ -25,8 +25,18 @@ void fs::checkAndClear(std::string path, std::istream &in) {
                     // mock input
     if (response == "y") {
       this->clearDir(path);
+    } else {
+      std::cerr << "Varning Repository not cleared and recloned. Are you sure "
+                   "you are "
+                   "checking the correct repository? If not end the program."
+                << std::endl;
     }
-  } else {
-    // do nothing
   }
+}
+
+bool fileManager::dirExists(std::string dirPath) {
+  if (std::filesystem::exists(dirPath)) {
+    return true;
+  }
+  return false;
 }

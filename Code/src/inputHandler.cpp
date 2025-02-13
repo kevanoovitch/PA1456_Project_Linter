@@ -7,7 +7,7 @@
 inputHandler::inputHandler() {
   this->isUrl = false;
   this->setInput("");
-  this->localPath = CLONE_TO;
+  this->localPath = REPOSITORY_PATH;
   this->inputStrategy = nullptr;
   this->setProcessSuccess(false);
 }
@@ -15,9 +15,7 @@ inputHandler::inputHandler() {
 void inputHandler::pickStrategy(std::string input) {
 
   if (this->argumentChecker(input) == false) {
-    std::cerr << "error in input handler, argument invalid"
-              << std::endl; // no no to cout in member function? repalce with
-                            // try catch (?)
+
     this->inputStrategy = nullptr;
   } else {
 
@@ -87,7 +85,7 @@ void inputHandler::executeStrategy() {
 
     inputStrategy->proccessInput();
   } else {
-    inputStrategy->proccessInput();
+    std::cerr << "Can't execute Folder Strategy not implemented";
   }
 }
 

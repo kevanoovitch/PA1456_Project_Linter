@@ -1,6 +1,7 @@
 
-#include "fs.h"
+#include "fileManager.h"
 #include "inputHandler.h"
+#include "testArgs.h"
 #include <filesystem>
 #include <fstream>
 #include <gtest/gtest.h>
@@ -8,24 +9,11 @@
 #include <string>
 #include <typeinfo>
 
-namespace TestArgs {
-const std::string URL_REPO_FULL =
-    "https://github.com/kevanoovitch/-DV1697-OS-course";
-const std::string URL_NON_REPO = "https://www.dn.se/";
-const std::string URL_REPO_MINIMAL =
-    "github.com/kevanoovitch/-DV1697-OS-course";
-const std::string URL_REPO_SMALL_SIZE =
-    "https://github.com/kevanoovitch/TimerApplication";
-const std::string REPOSITORY_PATH = "../Repository";
-const std::string TESTDIR_PATH = "../Tests/testDir";
-
-} // namespace TestArgs
-
 using namespace TestArgs;
 
 TEST(fsBasics, memberTest) {
 
-  fs filesys;
+  fileManager filesys;
   std::ofstream file;
 
   file.open(TESTDIR_PATH + "/test.txt");
@@ -96,7 +84,7 @@ TEST(inputHandler, inputArgsTest) {
 TEST(typeURL, URLhandling) {
 
   inputHandler handler1;
-  fs filesys;
+  fileManager filesys;
   handler1.pickStrategy(URL_REPO_SMALL_SIZE);
 
   ASSERT_EQ(typeid(*handler1.inputStrategy), typeid(typeURL))
@@ -117,17 +105,6 @@ TEST(typeURL, URLhandling) {
 
   ASSERT_EQ(handler1.processSuccess, true)
       << "Failed to process input using URL (Was /Repository not empty?)";
-}
-
-int main(int argc, char **argv) {
-  git_libgit2_init();
-  testing::InitGoogleTest(&argc, argv);
-
-  int testResults = RUN_ALL_TESTS();
-
-  return testResults;
-
-  /*--- Test 2: test if all files are listed ---*/
 }
 
 /*--- Test 2: test if all files are listed ---*/
