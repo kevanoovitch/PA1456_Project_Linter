@@ -9,6 +9,7 @@ const std::string URL_REPO_MINIMAL =
 const std::string URL_REPO_SMALL_SIZE =
     "https://github.com/kevanoovitch/TimerApplication";
 const std::string TESTDIR_PATH = "../Tests/testDir";
-const std::string URL_REPO_WITH_WORKFLOW = "https://github.com/rack/rack-test";
+const std::string URL_REPO_WITH_ALL =
+    "https://github.com/githubtraining/exercise-use-gitignore";
 const std::string WORKFLOW_PATH = "../Repository/.github/workflows";
 } // namespace TestArgs

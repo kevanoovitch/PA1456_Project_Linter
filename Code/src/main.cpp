@@ -38,6 +38,8 @@ int main() {
 
   theScanner.scanForWorkflow();
 
+  theScanner.scanForLicense();
+
   // Result
   theResult.printResults();
 

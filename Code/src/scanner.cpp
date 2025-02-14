@@ -8,6 +8,17 @@
 using namespace constants;
 
 /**********************************************************
+ *                          Scan Results                  *
+ **********************************************************/
+
+scanResults::scanResults() {
+
+  this->foundMap[GIT_IGNORE] = false;
+  this->foundMap[WORKFLOW_STRING] = false;
+  this->foundMap[LICENSE] = false;
+}
+
+/**********************************************************
  *                          Scanner                       *
  **********************************************************/
 
@@ -65,6 +76,24 @@ bool Scanner::scanForWorkflow() {
   return false;
 }
 
+void Scanner::scanForLicense() {
+
+  std::vector<std::string> licenseVector = {
+      "LICENSE", "LICENSE.txt", "UNLICENSE", "UNLICENSE.TXT", "COPYING"};
+
+  for (int i = 0; i < licenseVector.size(); i++) {
+
+    std::pair<bool, std::string> searchResult =
+        mySearcher->searchFor(REPOSITORY_PATH, licenseVector[i]);
+
+    if (searchResult.first == true) {
+      // found one license stop searching
+      this->setlicense(searchResult.first, searchResult.second);
+      break;
+    }
+  }
+}
+
 void Scanner::setGitIgnore(bool found, std::string path) {
 
   if (found == true) {
@@ -78,10 +107,10 @@ void Scanner::setGitIgnore(bool found, std::string path) {
 void Scanner::setlicense(bool found, std::string path) {
 
   if (found == true) {
-    myResults->foundMap["license"] = true;
+    myResults->foundMap[LICENSE] = true;
     myResults->gitIgnoreHandle = path;
   } else {
-    myResults->foundMap["license"] = false;
+    myResults->foundMap[LICENSE] = false;
   }
 }
 void Scanner::setworkflow(bool found, std::string path) {

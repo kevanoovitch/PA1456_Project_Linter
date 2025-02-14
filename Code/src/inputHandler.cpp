@@ -85,7 +85,7 @@ void inputHandler::executeStrategy() {
 
     inputStrategy->proccessInput();
   } else {
-    std::cerr << "Can't execute Folder Strategy not implemented";
+    std::cerr << "Can't execute Folder Strategy not implemented" << std::endl;
   }
 }
 

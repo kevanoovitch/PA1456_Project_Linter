@@ -1,4 +1,5 @@
 #pragma once
+
 #include "fileManager.h"
 #include <filesystem>
 #include <unordered_map>
@@ -21,6 +22,9 @@ struct scanResults {
   std::string gitIgnoreHandle;
   std::string licenseHandle;
   std::string workflowHandle;
+
+  // Default constructo for struct
+  scanResults();
 };
 
 /**********************************************************
@@ -37,6 +41,7 @@ public:
   void setGitIgnore(bool found, std::string pathTo);
   void setlicense(bool found, std::string pathTo);
   void setworkflow(bool found, std::string pathTo);
+  void scanForLicense();
   scanResults *myResults;
 
 private:
@@ -52,6 +57,9 @@ private:
   FRIEND_TEST(
       ScannerOperations,
       findRequiredFiles); // Allow specific test to access private members
+  FRIEND_TEST(
+      ScannerOperations,
+      dontfindRequiredFiles); // Allow specific test to access private members
 };
 
 /**********************************************************
