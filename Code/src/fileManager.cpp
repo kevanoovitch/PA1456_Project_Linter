@@ -26,10 +26,12 @@ void fileManager::checkAndClear(std::string path, std::istream &in) {
     if (response == "y") {
       this->clearDir(path);
     } else {
-      std::cerr << "Varning Repository not cleared and recloned. Are you sure "
-                   "you are "
-                   "checking the correct repository? If not end the program."
-                << std::endl;
+      std::cerr
+          << "Warning /Repository not cleared and not recloned. Are you sure "
+             "you are "
+             "checking the correct repository? If not end the restart the "
+             "program."
+          << std::endl;
     }
   }
 }

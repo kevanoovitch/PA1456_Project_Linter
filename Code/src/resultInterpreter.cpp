@@ -18,11 +18,13 @@ void resultInterpreter::printResults() {
   std::unordered_map<std::string, bool> &map = results->foundMap;
 
   std::cout << "\n";
-  std::cout << std::left << std::setw(20) << "Requried File" << " | Result\n";
-  std::cout << std::string(30, '-') << "\n"; // Separator line
+  std::cout << std::left << std::setw(30) << "Requried File" << " | "
+            << std::setw(10) << " Result " << " | " << "Path \n ";
+  std::cout << std::string(70, '-') << "\n"; // Separator line
 
   std::string resultOutput;
   std::string RequriedFile;
+  std::string path = "/Example/mock";
 
   for (const auto &pair : map) {
 
@@ -35,7 +37,20 @@ void resultInterpreter::printResults() {
       RequriedFile = pair.first + " found ";
     }
 
-    std::cout << std::left << std::setw(20) << RequriedFile << " | "
-              << std::boolalpha << resultOutput << "\n";
+    std::cout << std::left << std::setw(30) << RequriedFile << " | "
+              << std::setw(10) << std::boolalpha << resultOutput << " | "
+              << path << "\n";
   }
+}
+
+void resultInterpreter::printDetails() {
+
+  // Header
+  std::cout << "\n";
+  std::cout << std::setw(70) << "Details";
+  std::cout << std::string(70, '-');
+  std::cout << "\n";
+
+  // table start
+  std::cout << std::left << std::setw(30) << "Readme details" << std::endl;
 }

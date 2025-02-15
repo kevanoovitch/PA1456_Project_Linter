@@ -16,6 +16,7 @@ scanResults::scanResults() {
   this->foundMap[GIT_IGNORE] = false;
   this->foundMap[WORKFLOW_STRING] = false;
   this->foundMap[LICENSE] = false;
+  this->foundMap[README] = false;
 }
 
 /**********************************************************
@@ -35,92 +36,56 @@ Scanner::~Scanner() {
   delete this->fileManagerPtr;
 }
 
-void Scanner::scanForGitignore() {
-  std::pair<bool, std::string> searchResult =
-      this->mySearcher->searchFor(REPOSITORY_PATH, GIT_IGNORE);
+void Scanner::scanForWorkflow() {
 
-  if (searchResult.first == true) {
-    this->setGitIgnore(searchResult.first, searchResult.second);
-    // processSearchResults(searchResult.second, GIT_IGNORE);
-
-  } else {
-    this->setGitIgnore(searchResult.first, searchResult.second);
-  }
-}
-
-bool Scanner::scanForWorkflow() {
+  // Workflow scan has to first make sure the requried Dir exists
 
   if (fileManagerPtr->dirExists(WORKFLOW_PATH) == false) {
 
     myResults->foundMap[WORKFLOW_STRING] = false;
 
-    // search the whole repo for yamls files and or /workflow
+  } else {
 
-    return true;
+    std::vector<std::string> workflowFileExtensions = {".yml", ".yaml"};
+
+    scanFor(workflowFileExtensions, WORKFLOW_STRING);
   }
+}
 
-  std::pair<bool, std::string> ymlResult =
-      mySearcher->searchFor(WORKFLOW_PATH, ".yml");
+void Scanner::scanFor(std::vector<std::string> searchAlts,
+                      const std::string NAME) {
 
-  std::pair<bool, std::string> yamlResult =
-      mySearcher->searchFor(WORKFLOW_PATH, ".yaml");
+  std::vector<std::string> resultVectorPaths;
+  bool foundAtleastOnce = false;
+  for (int i = 0; i < searchAlts.size(); i++) {
 
-  if (ymlResult.first || yamlResult.first == true) {
-    if (ymlResult.first == true) {
-      this->setworkflow(ymlResult.first, ymlResult.second);
+    resultVectorPaths = mySearcher->searchFor(REPOSITORY_PATH, searchAlts[i]);
+
+    if (resultVectorPaths.size() == 0 && foundAtleastOnce == false) {
+      // no paths meaning found nothing
+      this->setFoundMap(false, NAME);
     } else {
-      this->setworkflow(yamlResult.first, yamlResult.second);
-    }
-  }
+      // found one or more readme files
+      foundAtleastOnce = true;
+      this->setFoundMap(true, NAME);
 
-  return false;
-}
-
-void Scanner::scanForLicense() {
-
-  std::vector<std::string> licenseVector = {
-      "LICENSE", "LICENSE.txt", "UNLICENSE", "UNLICENSE.TXT", "COPYING"};
-
-  for (int i = 0; i < licenseVector.size(); i++) {
-
-    std::pair<bool, std::string> searchResult =
-        mySearcher->searchFor(REPOSITORY_PATH, licenseVector[i]);
-
-    if (searchResult.first == true) {
-      // found one license stop searching
-      this->setlicense(searchResult.first, searchResult.second);
-      break;
+      for (int i = 0; i < resultVectorPaths.size(); i++) {
+        // Push back each path to the result struct
+        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+      }
     }
   }
 }
 
-void Scanner::setGitIgnore(bool found, std::string path) {
-
-  if (found == true) {
-    myResults->foundMap[GIT_IGNORE] = true;
-    myResults->gitIgnoreHandle = path;
-
-  } else {
-    myResults->foundMap[GIT_IGNORE] = false;
+void Scanner::setFoundMap(bool isFound, std::string Name) {
+  if (isFound == true) {
+    myResults->foundMap[Name] = true;
   }
 }
-void Scanner::setlicense(bool found, std::string path) {
 
-  if (found == true) {
-    myResults->foundMap[LICENSE] = true;
-    myResults->gitIgnoreHandle = path;
-  } else {
-    myResults->foundMap[LICENSE] = false;
-  }
-}
-void Scanner::setworkflow(bool found, std::string path) {
+void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
 
-  if (found == true) {
-    myResults->foundMap[WORKFLOW_STRING] = true;
-    myResults->gitIgnoreHandle = path;
-  } else {
-    myResults->foundMap[WORKFLOW_STRING] = false;
-  }
+  myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
 /**********************************************************
@@ -129,9 +94,9 @@ void Scanner::setworkflow(bool found, std::string path) {
 
 Searcher::Searcher(Scanner *scanner) { this->myScanner = scanner; }
 
-std::pair<bool, std::string> Searcher::searchFor(std::string path,
-                                                 std::string searchFor) {
-
+std::vector<std::string> Searcher::searchFor(std::string path,
+                                             std::string searchFor) {
+  std::vector<std::string> pathsToFoundFiles;
   std::string pattern("(" + searchFor + "$)");
 
   std::regex r(pattern);
@@ -142,12 +107,9 @@ std::pair<bool, std::string> Searcher::searchFor(std::string path,
 
     if (regex_search(filenamePath, r)) {
 
-      // myScanner->processSearchResults(filenamePath, searchFor);
-      //  std::cout << filenamePath << std::endl;
-
-      return {true, filenamePath};
+      pathsToFoundFiles.push_back(filenamePath);
     }
   }
 
-  return {false, ""};
+  return pathsToFoundFiles;
 };

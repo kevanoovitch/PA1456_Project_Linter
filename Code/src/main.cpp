@@ -1,8 +1,12 @@
+#include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"
 #include "resultInterpreter.h"
 #include "scanner.h"
 #include <git2.h>
+
+using namespace constants;
+using namespace CommonSearchTerms;
 
 // Will call all the functions needed
 
@@ -13,7 +17,7 @@ int main() {
   inputHandler userInputHandler;
   fileManager filesys;
 
-  std::cout << "Welcome to the Linter protype" << std::endl;
+  std::cout << "Welcome to the Linter prototype" << std::endl;
   std::cout << "Please input an URL to github repositoy you want to analyze"
             << std::endl;
   std::cin >> userInput;
@@ -34,14 +38,18 @@ int main() {
   Scanner theScanner;
   resultInterpreter theResult(theScanner.myResults);
 
-  theScanner.scanForGitignore();
+  theScanner.scanFor(gitIgnoreAlts, GIT_IGNORE);
 
   theScanner.scanForWorkflow();
 
-  theScanner.scanForLicense();
+  theScanner.scanFor(licenseAlts, LICENSE);
+
+  theScanner.scanFor(readmeAlts, README);
 
   // Result
   theResult.printResults();
+
+  theResult.printDetails();
 
   return 0;
 }

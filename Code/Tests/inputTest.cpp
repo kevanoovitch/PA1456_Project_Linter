@@ -1,4 +1,5 @@
 
+#include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"
 #include "testArgs.h"
@@ -90,9 +91,9 @@ TEST(typeURL, URLhandling) {
   ASSERT_EQ(typeid(*handler1.inputStrategy), typeid(typeURL))
       << "incorrect strategy picked";
 
-  if (filesys.isEmpty(REPOSITORY_PATH) != true) {
+  if (filesys.isEmpty(constants::REPOSITORY_PATH) != true) {
 
-    filesys.clearDir(REPOSITORY_PATH);
+    filesys.clearDir(constants::REPOSITORY_PATH);
   }
 
   handler1.executeStrategy();

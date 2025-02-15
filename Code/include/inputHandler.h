@@ -3,8 +3,6 @@
 #include <gtest/gtest.h>
 #include <string>
 
-const std::string REPOSITORY_PATH = "../Repository";
-
 /**********************************************************
  *                  Forward Declaration                   *
  **********************************************************/

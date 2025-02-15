@@ -9,5 +9,5 @@ extern const std::string URL_REPO_MINIMAL;
 extern const std::string URL_REPO_SMALL_SIZE;
 extern const std::string TESTDIR_PATH;
 extern const std::string URL_REPO_WITH_ALL;
-extern const std::string WORKFLOW_PATH;
+
 } // namespace TestArgs

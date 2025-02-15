@@ -17,11 +17,12 @@ class Searcher;
 
 struct scanResults {
   std::unordered_map<std::string, bool> foundMap;
-  // std::unordered_map<std::string, std::string> referenceMap;
+  std::unordered_map<std::string, std::vector<std::string>> pathsMap;
 
   std::string gitIgnoreHandle;
   std::string licenseHandle;
   std::string workflowHandle;
+  std::string readmeHandle;
 
   // Default constructo for struct
   scanResults();
@@ -36,12 +37,12 @@ public:
   Scanner();
   ~Scanner();
 
-  bool scanForWorkflow();
-  void scanForGitignore();
-  void setGitIgnore(bool found, std::string pathTo);
-  void setlicense(bool found, std::string pathTo);
-  void setworkflow(bool found, std::string pathTo);
-  void scanForLicense();
+  void scanForWorkflow();
+
+  void scanFor(std::vector<std::string> searchAlts, std::string name);
+  void setFoundMap(bool isFound, const std::string name);
+
+  void pushBackPath(std::pair<std::string, std::string> entry);
   scanResults *myResults;
 
 private:
@@ -69,8 +70,8 @@ private:
 class Searcher {
 public:
   Searcher(Scanner *scanner);
-  std::pair<bool, std::string> searchFor(std::string path,
-                                         std::string searchFor);
+  std::vector<std::string> searchFor(std::string wherePath,
+                                     std::string searchFor);
 
 private:
   Scanner *myScanner;

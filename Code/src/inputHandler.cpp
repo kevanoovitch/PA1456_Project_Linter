@@ -1,8 +1,10 @@
 #include "inputHandler.h"
-
+#include "constants.h"
 #include <git2.h>
 #include <regex>
 #include <string>
+
+using namespace constants;
 
 inputHandler::inputHandler() {
   this->isUrl = false;
