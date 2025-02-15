@@ -5,6 +5,9 @@
 #ignore build files
 Code/build/
 
+#ignore the repository temp dir
+Code/Repository
+
 #ignore 
 UML_Diagrams/*.png
 
