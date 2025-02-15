@@ -3,8 +3,6 @@
 #include <gtest/gtest.h>
 #include <string>
 
-const std::string CLONE_TO = "../Repository";
-
 /**********************************************************
  *                  Forward Declaration                   *
  **********************************************************/

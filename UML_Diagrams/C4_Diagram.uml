@@ -1,0 +1,18 @@
+@startuml C4_Diagram
+!include <C4/C4_Container>
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!include DEVICONS/github_badge.puml
+
+Person(personAlias, "User")
+System(linterAlias, "Linter Application", "[Clones], scans and reports results")
+System_Ext(githubAlias, "Github", $sprite="github_badge")
+
+'Relations
+Rel(personAlias, linterAlias, "Gives input Repo", "Path/URL")
+Rel_U(linterAlias, githubAlias, "Cloning", "Intiates Cloning")
+Rel_U(githubAlias, linterAlias, "Download", "Downloads the clone")
+Rel_U(linterAlias,personAlias, "Views scan results")
+
+
+@enduml

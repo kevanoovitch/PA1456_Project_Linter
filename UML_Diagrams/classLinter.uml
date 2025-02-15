@@ -5,9 +5,9 @@ class inputHandler {
     <<Context>>
     +bool getIsUrl()
     +git_repository *repo
-    +pickStrategy(str input)
+    +pickStrategy(string input)
     +executeStrategy()
-    #input
+    -string input
     #folderPath
     -bool isUrl()
     -bool processSuccess
@@ -16,6 +16,13 @@ class inputHandler {
 
     
 }
+
+class fs{
+    +void checkAndClear(string path, istream &in = cin);
+    +void clearDir(string path);
+    +bool isEmpty(string path);
+}
+
 class typeURL{
     +typeURL(inputHandler *h) : requries a link to parent 
     +processInput()
@@ -45,7 +52,7 @@ scanner -->  TrafficLightUI
 resultsAttributes --|> TrafficLightUI
 inputHandler --> scanner
 scanner <|-- scanFor
-Strategy -- inputHandler : Strategy Pattern
+Strategy --"1" inputHandler : Strategy Pattern
 Strategy <|-- typeURL
 Strategy <|-- typeFolder
 

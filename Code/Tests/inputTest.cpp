@@ -1,23 +1,43 @@
 
+#include "constants.h"
+#include "fileManager.h"
 #include "inputHandler.h"
+#include "testArgs.h"
 #include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 #include <iostream>
 #include <string>
 #include <typeinfo>
 
-namespace TestArgs {
-const std::string URL_REPO_FULL =
-    "https://github.com/kevanoovitch/-DV1697-OS-course";
-const std::string URL_NON_REPO = "https://www.dn.se/";
-const std::string URL_REPO_MINIMAL =
-    "github.com/kevanoovitch/-DV1697-OS-course";
-const std::string URL_REPO_SMALL_SIZE =
-    "https://github.com/kevanoovitch/TimerApplication";
-
-} // namespace TestArgs
-
 using namespace TestArgs;
+
+TEST(fsBasics, memberTest) {
+
+  fileManager filesys;
+  std::ofstream file;
+
+  file.open(TESTDIR_PATH + "/test.txt");
+  file.close();
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
+
+  filesys.clearDir(TESTDIR_PATH);
+
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), true);
+
+  file.open(TESTDIR_PATH + "/test.txt");
+  file.close();
+
+  std::istringstream simulatedNo("n");
+
+  filesys.checkAndClear(TESTDIR_PATH, simulatedNo);
+
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
+
+  std::istringstream simulatedYes("y");
+  filesys.checkAndClear(TESTDIR_PATH, simulatedYes);
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), true);
+}
 
 TEST(inputHandler, inputArgsTest) {
 
@@ -65,10 +85,16 @@ TEST(inputHandler, inputArgsTest) {
 TEST(typeURL, URLhandling) {
 
   inputHandler handler1;
+  fileManager filesys;
   handler1.pickStrategy(URL_REPO_SMALL_SIZE);
 
   ASSERT_EQ(typeid(*handler1.inputStrategy), typeid(typeURL))
       << "incorrect strategy picked";
+
+  if (filesys.isEmpty(constants::REPOSITORY_PATH) != true) {
+
+    filesys.clearDir(constants::REPOSITORY_PATH);
+  }
 
   handler1.executeStrategy();
 
@@ -80,25 +106,6 @@ TEST(typeURL, URLhandling) {
 
   ASSERT_EQ(handler1.processSuccess, true)
       << "Failed to process input using URL (Was /Repository not empty?)";
-}
-
-int main(int argc, char **argv) {
-  git_libgit2_init();
-  testing::InitGoogleTest(&argc, argv);
-
-  int testResults = RUN_ALL_TESTS();
-
-  std::string response;
-  std::cout << "Do you want to remove the cloned repository? (y/n)"
-            << std::endl;
-  std::cin >> response;
-  if (response == "y") {
-    std::filesystem::remove_all(CLONE_TO);
-  }
-
-  return testResults;
-
-  /*--- Test 2: test if all files are listed ---*/
 }
 
 /*--- Test 2: test if all files are listed ---*/

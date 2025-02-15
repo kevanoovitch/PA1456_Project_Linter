@@ -1,13 +1,15 @@
 #include "inputHandler.h"
-
+#include "constants.h"
 #include <git2.h>
 #include <regex>
 #include <string>
 
+using namespace constants;
+
 inputHandler::inputHandler() {
   this->isUrl = false;
   this->setInput("");
-  this->localPath = CLONE_TO;
+  this->localPath = REPOSITORY_PATH;
   this->inputStrategy = nullptr;
   this->setProcessSuccess(false);
 }
@@ -15,9 +17,7 @@ inputHandler::inputHandler() {
 void inputHandler::pickStrategy(std::string input) {
 
   if (this->argumentChecker(input) == false) {
-    std::cerr << "error in input handler, argument invalid"
-              << std::endl; // no no to cout in member function? repalce with
-                            // try catch (?)
+
     this->inputStrategy = nullptr;
   } else {
 
@@ -80,7 +80,16 @@ void inputHandler::setInput(std::string in) { this->input = in; }
 
 void inputHandler::setProcessSuccess(bool flag) { this->processSuccess = flag; }
 
-void inputHandler::executeStrategy() { inputStrategy->proccessInput(); }
+void inputHandler::executeStrategy() {
+
+  if (isUrl == true) {
+    // Make sure the dir to clone to is empty.
+
+    inputStrategy->proccessInput();
+  } else {
+    std::cerr << "Can't execute Folder Strategy not implemented" << std::endl;
+  }
+}
 
 std::string inputHandler::getInput() { return this->input; }
 
