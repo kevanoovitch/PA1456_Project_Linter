@@ -12,6 +12,7 @@ add_library(linterLib STATIC
     src/scanner.cpp
     src/resultInterpreter.cpp
     src/constants.cpp
+    Tests/testArgs.cpp
 )
 find_package(GTest REQUIRED)
 

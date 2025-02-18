@@ -3,6 +3,8 @@
 #include "inputHandler.h"
 #include "resultInterpreter.h"
 #include "scanner.h"
+#include "testArgs.h"
+
 #include <git2.h>
 
 using namespace constants;
@@ -21,6 +23,9 @@ int main() {
   std::cout << "Please input an URL to github repositoy you want to analyze"
             << std::endl;
   std::cin >> userInput;
+
+  // DEBUGGING
+  userInput = TestArgs::URL_REPO_FULL;
 
   // interpret input
 
@@ -48,6 +53,8 @@ int main() {
 
   // Result
   theResult.printResults();
+
+  theResult.interpretResults();
 
   theResult.printDetails();
 

@@ -8,32 +8,20 @@
 using namespace constants;
 
 /**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-scanResults::scanResults() {
-
-  this->foundMap[GIT_IGNORE] = false;
-  this->foundMap[WORKFLOW_STRING] = false;
-  this->foundMap[LICENSE] = false;
-  this->foundMap[README] = false;
-}
-
-/**********************************************************
  *                          Scanner                       *
  **********************************************************/
 
 Scanner::Scanner() {
   this->mySearcher = new Searcher(this);
-  this->myResults = new scanResults;
+  this->myResults = std::make_shared<scanResults>();
   this->repoPath = REPOSITORY_PATH;
   this->fileManagerPtr = new fileManager;
 }
 
 Scanner::~Scanner() {
   delete this->mySearcher;
-  delete this->myResults;
   delete this->fileManagerPtr;
+  delete this->mySearcher;
 }
 
 void Scanner::scanForWorkflow() {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "fileManager.h"
+#include "resultInterpreter.h"
 #include <filesystem>
 #include <unordered_map>
 #include <utility>
@@ -10,23 +11,7 @@
  **********************************************************/
 
 class Searcher;
-
-/**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-struct scanResults {
-  std::unordered_map<std::string, bool> foundMap;
-  std::unordered_map<std::string, std::vector<std::string>> pathsMap;
-
-  std::string gitIgnoreHandle;
-  std::string licenseHandle;
-  std::string workflowHandle;
-  std::string readmeHandle;
-
-  // Default constructo for struct
-  scanResults();
-};
+struct scanResults;
 
 /**********************************************************
  *                          Scanner                       *
@@ -43,7 +28,7 @@ public:
   void setFoundMap(bool isFound, const std::string name);
 
   void pushBackPath(std::pair<std::string, std::string> entry);
-  scanResults *myResults;
+  std::shared_ptr<scanResults> myResults;
 
 private:
   Searcher *mySearcher;

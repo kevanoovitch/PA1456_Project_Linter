@@ -40,20 +40,62 @@ abstract Strategy{
     +virtual processInput()
     
 }
-struct scanFor
-class TrafficLightUI
-struct resultsAttributes
+struct scanResult
+
+
 'class batchHandler 'optional RQ
 'class dockerHandler 'optional RQ
 
 
+
 'Relations
-scanner -->  TrafficLightUI
-resultsAttributes --|> TrafficLightUI
+scanner -->  ResultInterpreter
 inputHandler --> scanner
-scanner <|-- scanFor
+scanner -- scanResult
 Strategy --"1" inputHandler : Strategy Pattern
 Strategy <|-- typeURL
 Strategy <|-- typeFolder
+fs -- inputHandler
 
+ResultInterpreter -- scanResult
+
+'Result related lines
+class ResultInterpreter{
+    <<Context>>
+    +InterpretResult()
+    +PrintDetails() <<Print all entries>>
+    
+}
+abstract resultEntry{
+    <<Strategy Interface>>
+    +Name
+    +paths[]
+    +found 
+    +indication
+    +indicationReason
+    IndicatorDeterminator() {abstract}
+    parentPrintEntry() : <<Generic Print>>
+    
+}
+class readMeEntry{
+    IndicatorDeterminator()
+    PrintEntry()
+}
+class LicenseEntry{
+    IndicatorDeterminator()
+     PrintEntry()
+}
+class WorkflowEntry{
+    IndicatorDeterminator()
+     PrintEntry()
+}
+class gitignoreEntry{
+    IndicatorDeterminator()
+     PrintEntry()
+}
+ResultInterpreter --"*" resultEntry
+resultEntry <|-- readMeEntry
+resultEntry <|-- LicenseEntry
+resultEntry <|-- WorkflowEntry
+resultEntry <|-- gitignoreEntry
 @enduml
