@@ -49,6 +49,7 @@ class resultEntry {
 
 public:
   resultEntry(std::shared_ptr<scanResults> res);
+  resultEntry();
   virtual void indicatorDeterminator() = 0;
   virtual void printEntry() = 0;
   std::string entryName;
@@ -71,7 +72,7 @@ protected:
  **********************************************************/
 class readmeEntry : public resultEntry {
 public:
-  readmeEntry(std::shared_ptr<scanResults> res) : resultEntry(res){};
+  readmeEntry(std::shared_ptr<scanResults> res);
   readmeEntry();
 
 private:

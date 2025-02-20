@@ -1,5 +1,6 @@
 #include "resultInterpreter.h"
 #include "constants.h"
+#include <fmt/core.h>
 
 using namespace constants;
 
@@ -114,8 +115,8 @@ void resultInterpreter::printDetails() {
   std::cout << "\n";
 
   // table start
-  std::cout << std::left << std::setw(30) << "Readme details" << std::endl;
   for (auto &it : this->AllResultEntries) {
+
     it->printEntry();
   }
 }
@@ -137,32 +138,51 @@ scanResults::scanResults() {
  **********************************************************/
 resultEntry::resultEntry(std::shared_ptr<scanResults> res) {
   this->myResults = res;
+  this->Indication = WHITE;
 }
+
+resultEntry::resultEntry() { this->Indication = WHITE; }
 
 void resultEntry::VerifyIfFound(std::string name) {
   if (myResults->foundMap[name] == false) {
     this->Indication = RED;
     this->Indication = "Reason: Was not found";
   } else {
-    this->Indication = true;
+    this->Indication = GREEN;
   }
 }
 
 void resultEntry::noMoreThanOne(std::string name) {
   if (this->paths.size() > 1) {
     this->Indication = YELLOW;
-    this->IndicationReason = "There we several" + name + " files";
+    this->IndicationReason = "There were several" + name + " files";
   }
 }
 
 void resultEntry::parentPrintEntry() {
-  std::cout << this->Indication << " | " << this->entryName << " | "
-            << this->IndicationReason << std::endl;
+
+  // The data
+
+  /* Default option */
+  // this->Indication = "White";
+
+  std::vector<std::string> paths = this->paths;
+  fmt::print("{} {}\n", this->Indication, this->entryName);
+  fmt::print("    Reason: {}\n", this->IndicationReason);
+  fmt::print("    Paths:\n");
+  for (const auto &path : paths) {
+    fmt::print("      - {}\n", path);
+  }
+  fmt::print("\n");
 }
 
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
+readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
+  this->myResults = res;
+  this->Indication = WHITE;
+}
 
 void readmeEntry::indicatorDeterminator() {
 

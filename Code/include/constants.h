@@ -13,6 +13,7 @@ extern const std::string README;
 extern const std::string RED;
 extern const std::string GREEN;
 extern const std::string YELLOW;
+extern const std::string WHITE;
 
 } // namespace constants
 

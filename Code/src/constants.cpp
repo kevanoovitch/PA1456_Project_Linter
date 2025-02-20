@@ -11,6 +11,7 @@ const std::string README = "readMe";
 const std::string RED = "RED";
 const std::string GREEN = "GREEN";
 const std::string YELLOW = "YELLOW";
+const std::string WHITE = "WHITE";
 
 } // namespace constants
 
