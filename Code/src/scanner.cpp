@@ -91,11 +91,15 @@ std::vector<std::string> Searcher::searchFor(std::string path,
 
   for (auto const &dir_entry :
        std::filesystem::recursive_directory_iterator(path)) {
-    std::string filenamePath = dir_entry.path().string(); // Convert to string
+    std::string filenamePathRelative =
+        dir_entry.path().string(); // Convert to string
 
-    if (regex_search(filenamePath, r)) {
+    if (regex_search(filenamePathRelative, r)) {
 
-      pathsToFoundFiles.push_back(filenamePath);
+      std::string filenamePathAbsolute =
+          std::filesystem::absolute(dir_entry).string();
+
+      pathsToFoundFiles.push_back(filenamePathAbsolute);
     }
   }
 

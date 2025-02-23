@@ -24,35 +24,6 @@ bool resultInterpreter::isFound(std::string resultEntry) {
   return false;
 }
 
-void resultInterpreter::printResults() {
-  std::unordered_map<std::string, bool> &map = results->foundMap;
-
-  std::cout << "\n";
-  std::cout << std::left << std::setw(30) << "Requried File" << " | "
-            << std::setw(10) << " Result " << " | " << "Path \n ";
-  std::cout << std::string(70, '-') << "\n"; // Separator line
-
-  std::string resultOutput;
-  std::string RequriedFile;
-  std::string path = "/Example/mock";
-
-  for (const auto &pair : map) {
-
-    if (pair.second == false) {
-      resultOutput = "RED";
-      RequriedFile = pair.first + " not found ";
-    }
-    if (pair.second == true) {
-      resultOutput = "GREEN";
-      RequriedFile = pair.first + " found ";
-    }
-
-    std::cout << std::left << std::setw(30) << RequriedFile << " | "
-              << std::setw(10) << std::boolalpha << resultOutput << " | "
-              << path << "\n";
-  }
-}
-
 void resultInterpreter::interpretResults() {
 
   // Migrate data
@@ -110,8 +81,8 @@ void resultInterpreter::printDetails() {
 
   // Header
   std::cout << "\n";
-  std::cout << std::setw(70) << "Details";
-  std::cout << std::string(70, '-');
+  std::cout << "Results\n";
+  std::cout << std::string(45, '-');
   std::cout << "\n";
 
   // table start
@@ -146,7 +117,7 @@ resultEntry::resultEntry() { this->Indication = WHITE; }
 void resultEntry::VerifyIfFound(std::string name) {
   if (myResults->foundMap[name] == false) {
     this->Indication = RED;
-    this->Indication = "Reason: Was not found";
+    this->IndicationReason = "Was not found";
   } else {
     this->Indication = GREEN;
   }
@@ -191,7 +162,13 @@ void readmeEntry::indicatorDeterminator() {
 
   // check if several --> yellow
   this->noMoreThanOne(README);
+
   // check contents --> yellow/red
+
+  // Implicit indication
+  if (Indication == GREEN) {
+    this->IndicationReason = "No issues detected";
+  }
 }
 
 void readmeEntry::printEntry() { parentPrintEntry(); }
@@ -199,16 +176,22 @@ void readmeEntry::printEntry() { parentPrintEntry(); }
 /**********************************************************
  *                        License                         *
  **********************************************************/
+licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
+  this->Indication = WHITE;
+  this->myResults = res;
+}
 
 void licenseEntry::indicatorDeterminator() {
 
   // check if not found --> red
   this->VerifyIfFound(LICENSE);
 
-  // check if several --> yellow
-  this->noMoreThanOne(LICENSE);
-
   // check contents --> yellow/red
+
+  // Implicit indication
+  if (Indication == GREEN) {
+    this->IndicationReason = "No issues detected";
+  }
 }
 
 void licenseEntry::printEntry() { parentPrintEntry(); }
@@ -222,10 +205,10 @@ void workflowEntry::indicatorDeterminator() {
   // check if not found --> red
   this->VerifyIfFound(WORKFLOW_STRING);
 
-  // check if several --> yellow
-  this->noMoreThanOne(WORKFLOW_STRING);
-
-  // check contents --> yellow/red
+  // Implicit indication
+  if (Indication == GREEN) {
+    this->IndicationReason = "No issues detected";
+  }
 }
 
 void workflowEntry::printEntry() { parentPrintEntry(); }
@@ -243,6 +226,11 @@ void gitignoreEntry::indicatorDeterminator() {
   this->noMoreThanOne(GIT_IGNORE);
 
   // check contents --> yellow/red
+
+  // Implicit indication
+  if (Indication == GREEN) {
+    this->IndicationReason = "No issues detected";
+  }
 }
 
 void gitignoreEntry::printEntry() { parentPrintEntry(); }

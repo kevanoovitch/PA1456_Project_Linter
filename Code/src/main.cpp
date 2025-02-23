@@ -25,7 +25,7 @@ int main() {
   std::cin >> userInput;
 
   // DEBUGGING
-  userInput = TestArgs::URL_REPO_FULL;
+  userInput = TestArgs::URL_REPO_WITH_ALL;
 
   // interpret input
 
@@ -52,7 +52,6 @@ int main() {
   theScanner.scanFor(readmeAlts, README);
 
   // Result
-  theResult.printResults();
 
   theResult.interpretResults();
 

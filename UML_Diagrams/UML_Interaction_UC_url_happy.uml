@@ -8,8 +8,11 @@ skinparam participant {
 participant ":inputHandler" as in
 participant ":Strategy\n<<Abstract>>" as strat
 participant ":TypeURL" as url
-participant "Scanner" as scan  
-participant "trafficlight UI" as ui  
+participant "Repository" as repo 
+participant "Scanner" as scan 
+participant ":results" as res 
+participant ":Result Interperter" as ui 
+  
 
 -> in : inputHandler(str URL)
 activate in 
@@ -19,16 +22,26 @@ activate strat
 strat -> url 
 activate url
 deactivate strat
-url -> ui : setDownloadPath(str path)
+url -> repo : Clones to
+activate repo
 
-
-url -> scan : repository_ptr
 deactivate url
-activate scan
-scan -> ui : scanResults
+
+
+scan -> repo : Scans
+deactivate repo
+activate scan 
+
+scan -> res : Writes results
+activate res
+
+
+
+
 deactivate scan
 activate ui
+ui -> res : Interprets results
+deactivate res
 
-
-<--ui : result <<scanResults,DownloadPath>>
+<--ui : Outputs results
 @end

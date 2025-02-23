@@ -31,7 +31,7 @@ class resultInterpreter {
 public:
   resultInterpreter(std::shared_ptr<scanResults> res);
   bool isFound(std::string entry);
-  void printResults();
+
   void printDetails();
   void interpretResults();
   std::vector<std::unique_ptr<resultEntry>> AllResultEntries;
@@ -86,7 +86,7 @@ private:
 class licenseEntry : public resultEntry {
 
 public:
-  licenseEntry(std::shared_ptr<scanResults> res) : resultEntry(res){};
+  licenseEntry(std::shared_ptr<scanResults> res);
   licenseEntry();
 
 private:
