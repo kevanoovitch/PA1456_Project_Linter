@@ -8,32 +8,31 @@
 using namespace constants;
 
 /**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-scanResults::scanResults() {
-
-  this->foundMap[GIT_IGNORE] = false;
-  this->foundMap[WORKFLOW_STRING] = false;
-  this->foundMap[LICENSE] = false;
-  this->foundMap[README] = false;
-}
-
-/**********************************************************
  *                          Scanner                       *
  **********************************************************/
 
 Scanner::Scanner() {
   this->mySearcher = new Searcher(this);
-  this->myResults = new scanResults;
+  this->myResults = std::make_shared<scanResults>();
   this->repoPath = REPOSITORY_PATH;
   this->fileManagerPtr = new fileManager;
+  this->repo = nullptr;
+  this->myGitScanner = new GitScanner(this);
+}
+
+Scanner::Scanner(const inputHandler &inputHandler) {
+  this->mySearcher = new Searcher(this);
+  this->myResults = std::make_shared<scanResults>();
+  this->repoPath = REPOSITORY_PATH;
+  this->fileManagerPtr = new fileManager;
+  this->repo = inputHandler.repo;
+  this->myGitScanner = new GitScanner(this);
 }
 
 Scanner::~Scanner() {
   delete this->mySearcher;
-  delete this->myResults;
   delete this->fileManagerPtr;
+  delete this->myGitScanner;
 }
 
 void Scanner::scanForWorkflow() {
@@ -88,6 +87,26 @@ void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
   myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
+void Scanner::scanGitAttributes() {
+
+  if (this->repo == nullptr) {
+    std::cerr << "Error in Scanner::scanGitAttributes() repo was nullptr\n";
+    return;
+  }
+
+  // count commits
+  int nrOfCommits = this->myGitScanner->countCommits(this->repo);
+
+  // build set of contributors
+  std::set<std::string> Contributors =
+      this->myGitScanner->countContributors(this->repo);
+
+  // Write results to struct
+
+  this->myResults->resultContributors = Contributors;
+  this->myResults->resultNrOfCommits = nrOfCommits;
+}
+
 /**********************************************************
  *                          Searcher                      *
  **********************************************************/
@@ -103,13 +122,86 @@ std::vector<std::string> Searcher::searchFor(std::string path,
 
   for (auto const &dir_entry :
        std::filesystem::recursive_directory_iterator(path)) {
-    std::string filenamePath = dir_entry.path().string(); // Convert to string
+    std::string filenamePathRelative =
+        dir_entry.path().string(); // Convert to string
 
-    if (regex_search(filenamePath, r)) {
+    if (regex_search(filenamePathRelative, r)) {
 
-      pathsToFoundFiles.push_back(filenamePath);
+      std::string filenamePathAbsolute =
+          std::filesystem::absolute(dir_entry).string();
+
+      pathsToFoundFiles.push_back(filenamePathAbsolute);
     }
   }
 
   return pathsToFoundFiles;
 };
+
+/**********************************************************
+ *                          gitScanner                    *
+ **********************************************************/
+
+GitScanner::GitScanner(Scanner *ptr) { this->myScanner = ptr; }
+
+int GitScanner::countCommits(git_repository *repository) {
+
+  int commitCount = 0;
+  git_revwalk *walker;
+
+  if (repository == nullptr) {
+    std::cerr << "Error in countCommits() repoPtr was nullptr \n";
+    return -1;
+  }
+
+  int error = git_revwalk_new(&walker, repository);
+  error = git_revwalk_push_head(walker);
+
+  git_oid oid;
+  while (!git_revwalk_next(&oid, walker)) {
+    commitCount++;
+  }
+
+  if (error != 0) {
+
+    return -1;
+  }
+
+  git_revwalk_free(walker);
+  return commitCount;
+}
+
+std::set<std::string>
+GitScanner::countContributors(git_repository *repository) {
+  std::set<std::string> result;
+
+  int commitCount = 0;
+  git_revwalk *walker;
+
+  if (repository == nullptr) {
+
+    throw std::runtime_error(
+        "Error in countContributors() repoPtr was nullptr \n");
+  }
+
+  int error = git_revwalk_new(&walker, repository);
+  error = git_revwalk_push_head(walker);
+
+  git_oid oid;
+  while (!git_revwalk_next(&oid, walker)) {
+
+    git_commit *commit = nullptr;
+
+    git_commit_lookup(&commit, repository, &oid);
+
+    const git_signature *author = git_commit_author(commit);
+    if (author) {
+      std::string contributor =
+          std::string(author->name) + " <" + author->email + ">";
+      result.insert(contributor);
+    }
+  }
+
+  git_revwalk_free(walker);
+
+  return result;
+}

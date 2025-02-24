@@ -2,7 +2,9 @@
 #include <iostream>
 
 void fileManager::clearDir(std::string path) {
+
   for (const auto &entry : std::filesystem::directory_iterator(path)) {
+
     std::filesystem::remove_all(entry.path());
   }
 }

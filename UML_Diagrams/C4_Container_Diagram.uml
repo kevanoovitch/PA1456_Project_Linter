@@ -1,0 +1,36 @@
+@startuml C4_Container
+!include https://raw.githubUsercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+' uncomment the following line and comment the first to use locally
+' !include C4_Container.puml
+
+LAYOUT_TOP_DOWN()
+'LAYOUT_AS_SKETCH()
+'LAYOUT_WITH_LEGEND()
+
+!define DEVICONS https://raw.githubusercontent.com/tupadr3/plantuml-icon-font-sprites/master/devicons
+!include DEVICONS/github_badge.puml
+
+title Linter Application
+
+Person(User, User)
+
+System_Boundary(c1, "Linter Application") {
+    Container(inputHandler, "Input Handler" ,"The class responsible to handle user input")
+    Container(github_api, "GITLIB2", "Provides git commands functionallity")
+    Container(Scanner, "Scanner","Scans the repository")
+    Container(Repository, "Repository", "The local directory where it was clones to")
+    Container(Results, "Results", "Struct containing maps",)
+    Container(ResInterpret, "Result Interpreter", "Interprets, sets indiations and prints")
+}
+
+System_Ext(GitHub, "GitHub", $sprite="github_badge")
+
+Rel(User, inputHandler, "Inputs a URL")
+Rel(inputHandler, github_api, "Uses API to format the clone command")
+Rel_Up(github_api, GitHub, "Intiates cloning", "Args: <<URL>>, <<Location>>")
+Rel_Up(GitHub, Repository, "Clones to")
+Rel(Scanner, Repository, "Scans", "Scans for requried files")
+Rel(Scanner, Results, "Stores results", "Sets different keyvalues")
+Rel(ResInterpret, Results, "Interprets results")
+Rel(ResInterpret, User, "Outputs results")
+@enduml

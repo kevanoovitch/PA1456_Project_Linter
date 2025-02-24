@@ -8,6 +8,11 @@ const std::string REPOSITORY_PATH = "../Repository";
 const std::string WORKFLOW_PATH = "../Repository/.github/workflows";
 const std::string README = "readMe";
 
+const std::string RED = "\U0001F534";
+const std::string GREEN = "\U0001F7E2";
+const std::string YELLOW = "\U0001F7E1";
+const std::string WHITE = "\u26AA";
+
 } // namespace constants
 
 namespace CommonSearchTerms {

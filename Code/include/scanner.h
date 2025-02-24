@@ -1,7 +1,10 @@
 #pragma once
 
 #include "fileManager.h"
+#include "inputHandler.h"
+#include "resultInterpreter.h"
 #include <filesystem>
+#include <git2.h>
 #include <unordered_map>
 #include <utility>
 
@@ -10,23 +13,8 @@
  **********************************************************/
 
 class Searcher;
-
-/**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-struct scanResults {
-  std::unordered_map<std::string, bool> foundMap;
-  std::unordered_map<std::string, std::vector<std::string>> pathsMap;
-
-  std::string gitIgnoreHandle;
-  std::string licenseHandle;
-  std::string workflowHandle;
-  std::string readmeHandle;
-
-  // Default constructo for struct
-  scanResults();
-};
+struct scanResults;
+class GitScanner;
 
 /**********************************************************
  *                          Scanner                       *
@@ -35,24 +23,22 @@ struct scanResults {
 class Scanner {
 public:
   Scanner();
+  Scanner(const inputHandler &inputHandler);
   ~Scanner();
 
   void scanForWorkflow();
-
   void scanFor(std::vector<std::string> searchAlts, std::string name);
   void setFoundMap(bool isFound, const std::string name);
-
   void pushBackPath(std::pair<std::string, std::string> entry);
-  scanResults *myResults;
+  void scanGitAttributes();
+  std::shared_ptr<scanResults> myResults;
 
 private:
   Searcher *mySearcher;
   std::string repoPath;
+  git_repository *repo;
   fileManager *fileManagerPtr;
-
-  // std::string gitIgnoreHandle;
-  // std::string licenseHandle;
-  // std::string workflowHandle;
+  GitScanner *myGitScanner;
 
   /*Test related*/
   FRIEND_TEST(
@@ -61,6 +47,9 @@ private:
   FRIEND_TEST(
       ScannerOperations,
       dontfindRequiredFiles); // Allow specific test to access private members
+  FRIEND_TEST(
+      ScannerGitOperations,
+      findGitAtributes); // Allow specific test to access private members
 };
 
 /**********************************************************
@@ -72,6 +61,20 @@ public:
   Searcher(Scanner *scanner);
   std::vector<std::string> searchFor(std::string wherePath,
                                      std::string searchFor);
+
+private:
+  Scanner *myScanner;
+};
+
+/**********************************************************
+ *                          GitScanner                    *
+ **********************************************************/
+
+class GitScanner {
+public:
+  GitScanner(Scanner *scanner);
+  std::set<std::string> countContributors(git_repository *repository);
+  int countCommits(git_repository *repository);
 
 private:
   Scanner *myScanner;

@@ -1,0 +1,48 @@
+@startuml fileReq
+
+
+
+object "GitIgnore" {
+  Missing = 🔴
+  MoreThanOne = 🟡
+  LacksContents = 🟡
+  NoneOfTheAbove = 🟢
+}
+
+object "ReadMe" {
+  Missing = 🔴
+  MoreThanOne = 🟡
+  LacksContents = 🟡
+  NoneOfTheAbove = 🟢
+}
+
+object "Workflow" {
+  Missing_Workflows = 🔴
+  Missing_Files_in_Workflows = 🔴
+  MoreThanOne = Allowed
+  LacksContents = 🟡
+  NoneOfTheAbove = 🟢
+}
+
+object "License" {
+  Missing = 🔴
+  MoreThanOne = Allowed
+  LacksContents = 🟡
+  NoneOfTheAbove = 🟢
+}
+
+object "Test" <<TestObject>>{
+    
+  <<Only search and flag for the string "test">>
+}
+
+skinparam object {
+  BackgroundColor<<TestObject>> LightYellow
+  BorderColor<<TestObject>> Black
+}
+
+
+
+
+
+@enduml

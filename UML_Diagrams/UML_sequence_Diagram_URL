@@ -1,0 +1,42 @@
+@startuml seq_url_happy
+
+skinparam participant {
+    BackgroundColor technology
+    
+}
+
+actor User
+participant InputHandler
+participant typeURL
+participant Repository
+participant Scanner
+participant Results
+participant ResultInterpreter
+
+User -> InputHandler : Inputs URL
+activate InputHandler
+
+activate typeURL
+InputHandler -> typeURL : Process URL
+
+typeURL -> Repository : Store cloned files
+deactivate typeURL
+
+deactivate InputHandler
+
+User -> Scanner : Start scanning
+activate Scanner
+
+Scanner -> Repository : Scan files
+
+
+activate Results
+Scanner -> Results : Store scan results
+activate ResultInterpreter
+Results -> ResultInterpreter : Analyze scan findings
+
+deactivate Scanner
+deactivate Results
+ResultInterpreter --> User : Outputs results
+deactivate ResultInterpreter
+@enduml

@@ -3,6 +3,8 @@
 #include "inputHandler.h"
 #include "resultInterpreter.h"
 #include "scanner.h"
+#include "testArgs.h"
+
 #include <git2.h>
 
 using namespace constants;
@@ -22,6 +24,9 @@ int main() {
             << std::endl;
   std::cin >> userInput;
 
+  // DEBUGGING
+  userInput = TestArgs::URL_REPO_WITH_ALL;
+
   // interpret input
 
   userInputHandler.pickStrategy(userInput);
@@ -35,7 +40,7 @@ int main() {
   // Scanning
   std::cout << "cloning done, procceeding to scan" << std::endl;
 
-  Scanner theScanner;
+  Scanner theScanner(userInputHandler);
   resultInterpreter theResult(theScanner.myResults);
 
   theScanner.scanFor(gitIgnoreAlts, GIT_IGNORE);
@@ -46,8 +51,11 @@ int main() {
 
   theScanner.scanFor(readmeAlts, README);
 
+  theScanner.scanGitAttributes();
+
   // Result
-  theResult.printResults();
+
+  theResult.interpretResults();
 
   theResult.printDetails();
 
