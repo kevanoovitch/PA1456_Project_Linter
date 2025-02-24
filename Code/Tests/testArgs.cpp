@@ -13,4 +13,6 @@ const std::string URL_REPO_WITH_ALL =
     "https://github.com/githubtraining/exercise-use-gitignore";
 const std::string FOLDER_ABSOLUTE_REPO_TIMER_APP =
     "/home/kevin/Github_Repository/TimerApplication";
+const std::string FOLDER_ABSOLUTE_WITH_ALL =
+    "/home/kevin/Github_Repository/exercise-use-gitignore";
 } // namespace TestArgs

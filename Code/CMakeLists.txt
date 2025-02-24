@@ -64,7 +64,9 @@ if(ENABLE_TESTS)
         Tests/testArgs.cpp 
         Tests/mainTest.cpp 
         Tests/inputTest.cpp 
-        Tests/scannerTest.cpp)
+        Tests/scannerTest.cpp
+        #Tests/systemTest.cpp
+        )
     target_link_libraries(linterTests linterLib)
 else()
     message(STATUS "Building normal executable")

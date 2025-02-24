@@ -10,5 +10,6 @@ extern const std::string URL_REPO_SMALL_SIZE;
 extern const std::string TESTDIR_PATH;
 extern const std::string URL_REPO_WITH_ALL;
 extern const std::string FOLDER_ABSOLUTE_REPO_TIMER_APP;
+extern const std::string FOLDER_ABSOLUTE_WITH_ALL;
 
 } // namespace TestArgs
