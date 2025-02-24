@@ -44,3 +44,20 @@ bool fileManager::dirExists(std::string dirPath) {
   }
   return false;
 }
+
+bool fileManager::checkValidRepoPath(std::string path) {
+  if (!std::filesystem::exists(path)) {
+    return false;
+  }
+
+  if (!std::filesystem::is_directory(path)) {
+    return false;
+  }
+
+  if (!std::filesystem::exists(path + "/.git")) {
+    std::cerr << "couldn't find .git in the dir: " + path << std::endl;
+    return false;
+  }
+
+  return true;
+}

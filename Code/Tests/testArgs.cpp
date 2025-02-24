@@ -11,4 +11,6 @@ const std::string URL_REPO_SMALL_SIZE =
 const std::string TESTDIR_PATH = "../Tests/testDir";
 const std::string URL_REPO_WITH_ALL =
     "https://github.com/githubtraining/exercise-use-gitignore";
+const std::string FOLDER_ABSOLUTE_REPO_TIMER_APP =
+    "/home/kevin/Github_Repository/TimerApplication";
 } // namespace TestArgs

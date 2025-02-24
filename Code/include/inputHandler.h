@@ -1,4 +1,5 @@
 #pragma once
+#include "fileManager.h"
 #include <git2.h>
 #include <gtest/gtest.h>
 #include <string>
@@ -26,14 +27,14 @@ public:
   void pickStrategy(std::string input);
   void executeStrategy();
   std::string getInput();
-
-protected:
+  Strategy *getStrategyPtr();
   std::string localPath;
 
 private:
   bool argumentChecker(std::string arg);
   bool processSuccess;
   bool isUrl;
+  fileManager *fileManagerPtr;
   std::string input;
   Strategy *inputStrategy; // a pointer for what type of child it is
 
@@ -41,7 +42,9 @@ private:
   FRIEND_TEST(inputHandler,
               inputArgsTest); // Allow specific test to access private members
   FRIEND_TEST(typeURL,
-              URLhandling); // Allow specific test to access private members
+              URLhandling); // Allow specific test to access private members'
+  FRIEND_TEST(typeFolder,
+              folderHandling); // Allow specific test to access private members
 };
 
 /**********************************************************
@@ -79,6 +82,7 @@ private:
 class typeFolder : public Strategy {
 public:
   typeFolder() = default;
+  typeFolder(inputHandler *h);
   ~typeFolder();
 
   std::string getInput() override;

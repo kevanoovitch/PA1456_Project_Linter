@@ -32,6 +32,7 @@ public:
   void pushBackPath(std::pair<std::string, std::string> entry);
   void scanGitAttributes();
   std::shared_ptr<scanResults> myResults;
+  void setRepoPath(std::string path);
 
 private:
   Searcher *mySearcher;
