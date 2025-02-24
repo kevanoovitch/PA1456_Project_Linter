@@ -40,7 +40,7 @@ int main() {
   // Scanning
   std::cout << "cloning done, procceeding to scan" << std::endl;
 
-  Scanner theScanner;
+  Scanner theScanner(userInputHandler);
   resultInterpreter theResult(theScanner.myResults);
 
   theScanner.scanFor(gitIgnoreAlts, GIT_IGNORE);
@@ -50,6 +50,8 @@ int main() {
   theScanner.scanFor(licenseAlts, LICENSE);
 
   theScanner.scanFor(readmeAlts, README);
+
+  theScanner.scanGitAttributes();
 
   // Result
 

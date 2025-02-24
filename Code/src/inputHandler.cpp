@@ -12,6 +12,15 @@ inputHandler::inputHandler() {
   this->localPath = REPOSITORY_PATH;
   this->inputStrategy = nullptr;
   this->setProcessSuccess(false);
+  this->repo = nullptr;
+}
+
+inputHandler::~inputHandler() {
+  delete this->inputStrategy;
+  if (repo) { // Check if repo is valid before freeing
+    git_repository_free(repo);
+    repo = nullptr; // Prevent dangling pointer
+  }
 }
 
 void inputHandler::pickStrategy(std::string input) {
@@ -72,8 +81,6 @@ bool inputHandler::argumentChecker(std::string arg) {
   }
 }
 
-inputHandler::~inputHandler() { delete this->inputStrategy; }
-
 bool inputHandler::getIsUrl() { return this->isUrl; }
 
 void inputHandler::setInput(std::string in) { this->input = in; }
@@ -112,7 +119,8 @@ std::string typeURL::getInput() { return parentInputHandler->getInput(); }
 void typeURL::proccessInput() {
   std::string url = getInput();
 
-  if (int err = git_clone(&repo, url.c_str(), localPath.c_str(), NULL) != 0) {
+  if (int err = git_clone(&parentInputHandler->repo, url.c_str(),
+                          localPath.c_str(), NULL) != 0) {
     // error in cloning
 
     parentInputHandler->setProcessSuccess(false);

@@ -72,6 +72,7 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
   fileManager filesys;
 
   filesys.clearDir(REPOSITORY_PATH);
+
   handler.pickStrategy(URL_REPO_SMALL_SIZE);
   handler.executeStrategy();
 
@@ -115,4 +116,55 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
   myScanner.scanFor(readmeAlts, README);
   result = interpret.isFound(README);
   ASSERT_EQ(result, false) << "Expected to NOT find a readme but did";
+}
+
+TEST(ScannerGitOperations, findGitAtributes) {
+
+  // Setup Test Environment
+
+  inputHandler handler;
+  fileManager filesys;
+
+  filesys.clearDir(REPOSITORY_PATH);
+  handler.pickStrategy(URL_REPO_SMALL_SIZE);
+  handler.executeStrategy();
+
+  // Execute Tests
+  Scanner myScanner(handler);
+
+  resultInterpreter interpret(myScanner.myResults);
+  int commitResult = 0;
+
+  // Count commits - friend function
+
+  commitResult = myScanner.myGitScanner->countCommits(myScanner.repo);
+
+  EXPECT_GT(commitResult, 0)
+      << "Expected commit count to be bigger than 1 but it wasn't";
+
+  std::cerr << "\n";
+  std::cerr << "GITLIB ERROR from GitScanner::countCommits: "
+            << git_error_last()->message << std::endl;
+  std::cerr << "\n";
+
+  // List contributors -friend function
+
+  std::set<std::string> contributorsSet =
+      myScanner.myGitScanner->countContributors(myScanner.repo);
+
+  int nrOfContributors = contributorsSet.size();
+
+  EXPECT_GT(nrOfContributors, 0)
+      << "Expected commit count to be bigger than 1 but it wasn't";
+
+  std::cerr << "\n";
+  std::cerr << "GITLIB ERROR from GitScanner::countContributors: "
+            << git_error_last()->message << std::endl;
+  std::cerr << "\n";
+
+  // List and count git attributes and write to result - proper method
+  myScanner.scanGitAttributes();
+
+  EXPECT_GT(myScanner.myResults->resultNrOfCommits, 0);
+  EXPECT_GT(myScanner.myResults->resultContributors.size(), 0);
 }

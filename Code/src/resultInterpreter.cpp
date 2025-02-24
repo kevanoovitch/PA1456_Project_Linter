@@ -1,6 +1,7 @@
 #include "resultInterpreter.h"
 #include "constants.h"
 #include <fmt/core.h>
+#include <fmt/ranges.h>
 
 using namespace constants;
 
@@ -85,11 +86,25 @@ void resultInterpreter::printDetails() {
   std::cout << std::string(45, '-');
   std::cout << "\n";
 
-  // table start
+  // print all entries
   for (auto &it : this->AllResultEntries) {
 
     it->printEntry();
   }
+
+  // Print GIT attributes
+  printGitAttributes();
+}
+
+void resultInterpreter::printGitAttributes() {
+
+  std::set<std::string> &set = this->results->resultContributors;
+
+  fmt::print("\n📌 Repository Stats\n");
+  fmt::print("═════════════════════════════\n");
+  fmt::print("🔢 Total Commits: {}\n", this->results->resultNrOfCommits);
+  fmt::print("👥 Total Contributors:\n {}\n", fmt::join(set, "\n"));
+  fmt::print("═════════════════════════════\n");
 }
 
 /**********************************************************
@@ -97,7 +112,6 @@ void resultInterpreter::printDetails() {
  **********************************************************/
 
 scanResults::scanResults() {
-
   this->foundMap[GIT_IGNORE] = false;
   this->foundMap[WORKFLOW_STRING] = false;
   this->foundMap[LICENSE] = false;
@@ -126,12 +140,11 @@ void resultEntry::VerifyIfFound(std::string name) {
 void resultEntry::noMoreThanOne(std::string name) {
   if (this->paths.size() > 1) {
     this->Indication = YELLOW;
-    this->IndicationReason = "There were several" + name + " files";
+    this->IndicationReason = "There were several " + name + " files";
   }
 }
 
 void resultEntry::parentPrintEntry() {
-
   // The data
 
   /* Default option */
@@ -156,7 +169,6 @@ readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
 }
 
 void readmeEntry::indicatorDeterminator() {
-
   // check if not found --> red
   this->VerifyIfFound(README);
 
@@ -182,7 +194,6 @@ licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
 }
 
 void licenseEntry::indicatorDeterminator() {
-
   // check if not found --> red
   this->VerifyIfFound(LICENSE);
 
@@ -201,7 +212,6 @@ void licenseEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void workflowEntry::indicatorDeterminator() {
-
   // check if not found --> red
   this->VerifyIfFound(WORKFLOW_STRING);
 
@@ -218,7 +228,6 @@ void workflowEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void gitignoreEntry::indicatorDeterminator() {
-
   // check if not found --> red
   this->VerifyIfFound(GIT_IGNORE);
 

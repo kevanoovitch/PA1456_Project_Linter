@@ -87,7 +87,25 @@ void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
   myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
-void Scanner::scanGitAttributes() {}
+void Scanner::scanGitAttributes() {
+
+  if (this->repo == nullptr) {
+    std::cerr << "Error in Scanner::scanGitAttributes() repo was nullptr\n";
+    return;
+  }
+
+  // count commits
+  int nrOfCommits = this->myGitScanner->countCommits(this->repo);
+
+  // build set of contributors
+  std::set<std::string> Contributors =
+      this->myGitScanner->countContributors(this->repo);
+
+  // Write results to struct
+
+  this->myResults->resultContributors = Contributors;
+  this->myResults->resultNrOfCommits = nrOfCommits;
+}
 
 /**********************************************************
  *                          Searcher                      *
@@ -125,11 +143,17 @@ std::vector<std::string> Searcher::searchFor(std::string path,
 
 GitScanner::GitScanner(Scanner *ptr) { this->myScanner = ptr; }
 
-int GitScanner::countCommits(git_repository *repo) {
+int GitScanner::countCommits(git_repository *repository) {
 
   int commitCount = 0;
   git_revwalk *walker;
-  int error = git_revwalk_new(&walker, repo);
+
+  if (repository == nullptr) {
+    std::cerr << "Error in countCommits() repoPtr was nullptr \n";
+    return -1;
+  }
+
+  int error = git_revwalk_new(&walker, repository);
   error = git_revwalk_push_head(walker);
 
   git_oid oid;
@@ -142,5 +166,42 @@ int GitScanner::countCommits(git_repository *repo) {
     return -1;
   }
 
+  git_revwalk_free(walker);
   return commitCount;
+}
+
+std::set<std::string>
+GitScanner::countContributors(git_repository *repository) {
+  std::set<std::string> result;
+
+  int commitCount = 0;
+  git_revwalk *walker;
+
+  if (repository == nullptr) {
+
+    throw std::runtime_error(
+        "Error in countContributors() repoPtr was nullptr \n");
+  }
+
+  int error = git_revwalk_new(&walker, repository);
+  error = git_revwalk_push_head(walker);
+
+  git_oid oid;
+  while (!git_revwalk_next(&oid, walker)) {
+
+    git_commit *commit = nullptr;
+
+    git_commit_lookup(&commit, repository, &oid);
+
+    const git_signature *author = git_commit_author(commit);
+    if (author) {
+      std::string contributor =
+          std::string(author->name) + " <" + author->email + ">";
+      result.insert(contributor);
+    }
+  }
+
+  git_revwalk_free(walker);
+
+  return result;
 }

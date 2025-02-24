@@ -14,11 +14,8 @@ struct scanResults {
   std::unordered_map<std::string, bool> foundMap;
   std::unordered_map<std::string, std::vector<std::string>> pathsMap;
 
-  std::string gitIgnoreHandle;
-  std::string licenseHandle;
-  std::string workflowHandle;
-  std::string readmeHandle;
-
+  int resultNrOfCommits;
+  std::set<std::string> resultContributors;
   // Default constructo for struct
   scanResults();
 };
@@ -37,6 +34,7 @@ public:
   std::vector<std::unique_ptr<resultEntry>> AllResultEntries;
 
 private:
+  void printGitAttributes();
   std::shared_ptr<scanResults> results;
   std::unique_ptr<resultEntry> pickAndCreateEntry(std::string name);
 };
