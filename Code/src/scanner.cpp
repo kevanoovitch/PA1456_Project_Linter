@@ -16,12 +16,23 @@ Scanner::Scanner() {
   this->myResults = std::make_shared<scanResults>();
   this->repoPath = REPOSITORY_PATH;
   this->fileManagerPtr = new fileManager;
+  this->repo = nullptr;
+  this->myGitScanner = new GitScanner(this);
+}
+
+Scanner::Scanner(const inputHandler &inputHandler) {
+  this->mySearcher = new Searcher(this);
+  this->myResults = std::make_shared<scanResults>();
+  this->repoPath = REPOSITORY_PATH;
+  this->fileManagerPtr = new fileManager;
+  this->repo = inputHandler.repo;
+  this->myGitScanner = new GitScanner(this);
 }
 
 Scanner::~Scanner() {
   delete this->mySearcher;
   delete this->fileManagerPtr;
-  delete this->mySearcher;
+  delete this->myGitScanner;
 }
 
 void Scanner::scanForWorkflow() {
@@ -76,6 +87,8 @@ void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
   myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
+void Scanner::scanGitAttributes() {}
+
 /**********************************************************
  *                          Searcher                      *
  **********************************************************/
@@ -105,3 +118,29 @@ std::vector<std::string> Searcher::searchFor(std::string path,
 
   return pathsToFoundFiles;
 };
+
+/**********************************************************
+ *                          gitScanner                    *
+ **********************************************************/
+
+GitScanner::GitScanner(Scanner *ptr) { this->myScanner = ptr; }
+
+int GitScanner::countCommits(git_repository *repo) {
+
+  int commitCount = 0;
+  git_revwalk *walker;
+  int error = git_revwalk_new(&walker, repo);
+  error = git_revwalk_push_head(walker);
+
+  git_oid oid;
+  while (!git_revwalk_next(&oid, walker)) {
+    commitCount++;
+  }
+
+  if (error != 0) {
+
+    return -1;
+  }
+
+  return commitCount;
+}
