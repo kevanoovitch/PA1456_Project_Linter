@@ -11,6 +11,7 @@
 #include <typeinfo>
 
 using namespace TestArgs;
+using namespace constants;
 
 TEST(fsBasics, memberTest) {
 
@@ -108,4 +109,17 @@ TEST(typeURL, URLhandling) {
       << "Failed to process input using URL (Was /Repository not empty?)";
 }
 
-/*--- Test 2: test if all files are listed ---*/
+TEST(typeFolder, folderHandling) {
+  inputHandler handler1;
+  fileManager filesys;
+  handler1.pickStrategy(FOLDER_ABSOLUTE_REPO_TIMER_APP);
+
+  ASSERT_EQ(typeid(*(handler1.inputStrategy)),
+            typeid(typeFolder)) // returns true if x,x are equal type
+      << "Expected inputStrategy to be of typeFolder, but it wasn't";
+
+  handler1.executeStrategy();
+
+  ASSERT_NE(handler1.localPath, REPOSITORY_PATH)
+      << "Expected folderpath to have switched from default";
+}

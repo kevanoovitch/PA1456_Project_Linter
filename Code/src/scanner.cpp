@@ -23,7 +23,7 @@ Scanner::Scanner() {
 Scanner::Scanner(const inputHandler &inputHandler) {
   this->mySearcher = new Searcher(this);
   this->myResults = std::make_shared<scanResults>();
-  this->repoPath = REPOSITORY_PATH;
+  this->repoPath = inputHandler.localPath;
   this->fileManagerPtr = new fileManager;
   this->repo = inputHandler.repo;
   this->myGitScanner = new GitScanner(this);
@@ -39,7 +39,8 @@ void Scanner::scanForWorkflow() {
 
   // Workflow scan has to first make sure the requried Dir exists
 
-  if (fileManagerPtr->dirExists(WORKFLOW_PATH) == false) {
+  if (fileManagerPtr->dirExists(this->repoPath + "/.github/workflows") ==
+      false) {
 
     myResults->foundMap[WORKFLOW_STRING] = false;
 
@@ -58,7 +59,7 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
   bool foundAtleastOnce = false;
   for (int i = 0; i < searchAlts.size(); i++) {
 
-    resultVectorPaths = mySearcher->searchFor(REPOSITORY_PATH, searchAlts[i]);
+    resultVectorPaths = mySearcher->searchFor(this->repoPath, searchAlts[i]);
 
     if (resultVectorPaths.size() == 0 && foundAtleastOnce == false) {
       // no paths meaning found nothing
@@ -106,6 +107,8 @@ void Scanner::scanGitAttributes() {
   this->myResults->resultContributors = Contributors;
   this->myResults->resultNrOfCommits = nrOfCommits;
 }
+
+void Scanner::setRepoPath(std::string path) { this->repoPath = path; }
 
 /**********************************************************
  *                          Searcher                      *

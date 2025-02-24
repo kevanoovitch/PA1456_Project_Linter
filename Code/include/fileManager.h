@@ -11,4 +11,5 @@ public:
   void clearDir(std::string path);
   bool isEmpty(std::string path);
   bool dirExists(std::string path);
+  bool checkValidRepoPath(std::string path);
 };

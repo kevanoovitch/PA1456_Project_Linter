@@ -2,7 +2,6 @@
 #include "constants.h"
 #include <git2.h>
 #include <regex>
-#include <string>
 
 using namespace constants;
 
@@ -13,6 +12,7 @@ inputHandler::inputHandler() {
   this->inputStrategy = nullptr;
   this->setProcessSuccess(false);
   this->repo = nullptr;
+  this->fileManagerPtr = new fileManager;
 }
 
 inputHandler::~inputHandler() {
@@ -21,6 +21,7 @@ inputHandler::~inputHandler() {
     git_repository_free(repo);
     repo = nullptr; // Prevent dangling pointer
   }
+  delete this->fileManagerPtr;
 }
 
 void inputHandler::pickStrategy(std::string input) {
@@ -28,18 +29,21 @@ void inputHandler::pickStrategy(std::string input) {
   if (this->argumentChecker(input) == false) {
 
     this->inputStrategy = nullptr;
+    return;
   } else {
 
     if (this->isUrl == true) {
       // It was a valid URL input
       this->inputStrategy = new typeURL(this);
     } else {
-      this->inputStrategy = new typeFolder();
+      this->inputStrategy = new typeFolder(this);
     }
   }
 
   this->setInput(input);
 }
+
+Strategy *inputHandler::getStrategyPtr() { return this->inputStrategy; }
 
 bool inputHandler::argumentChecker(std::string arg) {
   /*Return true if valid, return false if unvalid*/
@@ -63,22 +67,16 @@ bool inputHandler::argumentChecker(std::string arg) {
     this->isUrl = true;
     return true;
   }
-  /*
-  else if (//Condition)
-  {
 
-      this->isUrl = false;
-      // if folder it's not a file path or an url break
-
-      // if it's a filepath make sure it leads to a gitRepo
-  }
-
-  */
-  else {
-    // It's neither folder or URL so invalid input
-
+  else if (this->fileManagerPtr->checkValidRepoPath(arg)) {
+    // Check if its a path to a folder
+    this->isUrl = false;
+    return true;
+  } else {
     return false;
   }
+
+  // IMPLICIT ELSE: It's neither folder or URL so invalid input
 }
 
 bool inputHandler::getIsUrl() { return this->isUrl; }
@@ -94,7 +92,7 @@ void inputHandler::executeStrategy() {
 
     inputStrategy->proccessInput();
   } else {
-    std::cerr << "Can't execute Folder Strategy not implemented" << std::endl;
+    inputStrategy->proccessInput();
   }
 }
 
@@ -135,6 +133,18 @@ void typeURL::proccessInput() {
 
 typeFolder::~typeFolder() {}
 
-std::string typeFolder::getInput() { return ""; }
+typeFolder::typeFolder(inputHandler *h) { this->parentInputHandler = h; }
 
-void typeFolder::proccessInput() {}
+std::string typeFolder::getInput() { return parentInputHandler->getInput(); }
+
+void typeFolder::proccessInput() {
+
+  std::string path = getInput();
+
+  // set the repo
+  int error =
+      git_repository_init(&parentInputHandler->repo, path.c_str(), false);
+
+  // Need to change the scan dir
+  parentInputHandler->localPath = path;
+}

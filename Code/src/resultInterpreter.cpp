@@ -103,7 +103,7 @@ void resultInterpreter::printGitAttributes() {
   fmt::print("\n📌 Repository Stats\n");
   fmt::print("═════════════════════════════\n");
   fmt::print("🔢 Total Commits: {}\n", this->results->resultNrOfCommits);
-  fmt::print("👥 Total Contributors:\n {}\n", fmt::join(set, "\n"));
+  fmt::print("👥 Contributors:\n{} \n", fmt::join(set, "\n"));
   fmt::print("═════════════════════════════\n");
 }
 
