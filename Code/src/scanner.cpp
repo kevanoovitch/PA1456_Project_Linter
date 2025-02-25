@@ -1,9 +1,13 @@
 #include "scanner.h"
 #include "constants.h"
 #include "regex"
-#include <functional>
+#include <array>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <string>
 #include <unordered_map>
-#include <utility>
+using json = nlohmann::json;
 
 using namespace constants;
 
@@ -109,6 +113,54 @@ void Scanner::scanGitAttributes() {
 }
 
 void Scanner::setRepoPath(std::string path) { this->repoPath = path; }
+
+void Scanner::parseGitleaksOutput(const std::string &jsonFilePath) {
+  std::ifstream file(jsonFilePath);
+  if (!file) {
+    std::cerr << "Failed to open Gitleaks JSON output." << std::endl;
+    return;
+  }
+
+  nlohmann::json report;
+  file >> report;
+
+  if (!report.empty()) {
+
+    // 🔹 Loop through each detected secret
+    for (const auto &leak : report) {
+
+      auto &leaksmap = this->myResults->leaksReasonAndFilepathSet;
+
+      leaksmap[leak["Description"]].insert(leak["File"]);
+    }
+  } else {
+    // Do nothing resultInterpreter will handle the conclusion
+  }
+}
+
+void Scanner::runGitLeaks() {
+
+  std::string command =
+      "gitleaks dir " + repoPath + " -r " + PATH_REPORT_CREDENTIALS + " 2>&1";
+
+  FILE *pipe = popen(command.c_str(), "r");
+  if (!pipe) {
+    std::cerr << "Failed to run Gitleaks" << std::endl;
+    return;
+  }
+
+  // Read output
+  char buffer[128];
+  std::string result;
+  while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+    result += buffer;
+  }
+
+  // Close the pipe
+  pclose(pipe);
+
+  parseGitleaksOutput(PATH_REPORT_CREDENTIALS);
+}
 
 /**********************************************************
  *                          Searcher                      *

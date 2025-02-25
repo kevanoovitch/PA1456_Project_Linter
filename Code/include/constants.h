@@ -15,6 +15,8 @@ extern const std::string GREEN;
 extern const std::string YELLOW;
 extern const std::string WHITE;
 
+extern const std::string PATH_REPORT_CREDENTIALS;
+
 } // namespace constants
 
 namespace CommonSearchTerms {

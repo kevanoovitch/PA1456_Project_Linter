@@ -55,8 +55,19 @@ target_include_directories(linterLib PUBLIC ${FMT_INCLUDE_DIR})
 target_link_libraries(linterLib PUBLIC ${FMT_LIBRARY})
 
 
+#Lohman Json API
+
+FetchContent_Declare(
+    json
+    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
+)
+FetchContent_MakeAvailable(json)
+
+target_link_libraries(linterLib PRIVATE nlohmann_json::nlohmann_json)
+
 # Define a manual toggle for testing mode
-set(ENABLE_TESTS OFF)  # Change to ON if you want to build the test executable
+set(ENABLE_TESTS ON)  # Change to ON if you want to build the test executable
 
 if(ENABLE_TESTS)
     message(STATUS "Building test executable")
@@ -65,7 +76,7 @@ if(ENABLE_TESTS)
         Tests/mainTest.cpp 
         Tests/inputTest.cpp 
         Tests/scannerTest.cpp
-        #Tests/systemTest.cpp
+        Tests/systemTest.cpp
         )
     target_link_libraries(linterTests linterLib)
 else()

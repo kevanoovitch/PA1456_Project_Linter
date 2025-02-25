@@ -13,6 +13,9 @@ const std::string GREEN = "\U0001F7E2";
 const std::string YELLOW = "\U0001F7E1";
 const std::string WHITE = "\u26AA";
 
+extern const std::string PATH_REPORT_CREDENTIALS =
+    "../Repository/gitleaksReport.json";
+
 } // namespace constants
 
 namespace CommonSearchTerms {
