@@ -28,11 +28,16 @@ public:
 
   void scanForWorkflow();
   void scanFor(std::vector<std::string> searchAlts, std::string name);
-  void setFoundMap(bool isFound, const std::string name);
   void pushBackPath(std::pair<std::string, std::string> entry);
   void scanGitAttributes();
-  std::shared_ptr<scanResults> myResults;
+
+  void runGitLeaks();
+  void parseGitleaksOutput(const std::string &jsonFilePath);
+
   void setRepoPath(std::string path);
+  void setFoundMap(bool isFound, const std::string name);
+
+  std::shared_ptr<scanResults> myResults;
 
 private:
   Searcher *mySearcher;

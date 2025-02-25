@@ -25,7 +25,6 @@ protected:
     // Get test parameter (different strategy input)
     std::string strategyInput = GetParam();
 
-    std::cout << strategyInput << std::endl;
     handler.pickStrategy(strategyInput);
 
     Strategy *ptr = handler.getStrategyPtr();
@@ -42,23 +41,17 @@ protected:
     theScanner->scanFor(licenseAlts, LICENSE);
     theScanner->scanFor(readmeAlts, README);
     theScanner->scanGitAttributes();
+    theScanner->runGitLeaks();
 
     // Interpret results
     theResult = new resultInterpreter(theScanner->myResults);
 
     theResult->interpretResults();
-    theResult->printDetails();
   }
 
   void TearDown() override {
     delete theScanner;
     delete theResult;
-  }
-
-  // Run the full linter process
-  void runProgram() {
-    theResult->interpretResults();
-    theResult->printDetails();
   }
 };
 

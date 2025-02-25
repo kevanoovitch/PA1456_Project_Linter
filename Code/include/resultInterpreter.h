@@ -16,6 +16,9 @@ struct scanResults {
 
   int resultNrOfCommits;
   std::set<std::string> resultContributors;
+
+  std::unordered_map<std::string, std::set<std::string>>
+      leaksReasonAndFilepathSet;
   // Default constructo for struct
   scanResults();
 };
@@ -31,6 +34,7 @@ public:
 
   void printDetails();
   void interpretResults();
+  void interpretLeaks();
   std::vector<std::unique_ptr<resultEntry>> AllResultEntries;
 
 private:
@@ -119,4 +123,20 @@ public:
 private:
   void indicatorDeterminator() override;
   void printEntry() override;
+};
+
+/**********************************************************
+ *                        Leaks Entry                     *
+ **********************************************************/
+
+class leaksEntry : public resultEntry {
+
+public:
+  leaksEntry(std::shared_ptr<scanResults> res) : resultEntry(res){};
+  leaksEntry();
+
+private:
+  void indicatorDeterminator() override;
+  void printEntry() override;
+  std::vector<std::pair<std::string, std::set<std::string>>> IndicationReasons;
 };

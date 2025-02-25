@@ -26,7 +26,7 @@ int main() {
   std::cin >> userInput;
 
   // DEBUGGING
-  // userInput = TestArgs::URL_REPO_WITH_ALL;
+  userInput = "/home/kevin/Github_Repository/TimerApplication";
 
   // interpret input
 
@@ -60,6 +60,8 @@ int main() {
   theScanner.scanFor(readmeAlts, README);
 
   theScanner.scanGitAttributes();
+
+  theScanner.runGitLeaks();
 
   // Result
 

@@ -25,6 +25,13 @@ bool resultInterpreter::isFound(std::string resultEntry) {
   return false;
 }
 
+void resultInterpreter::interpretLeaks() {
+
+  std::unique_ptr<resultEntry> entryPtr = std::make_unique<leaksEntry>(results);
+  entryPtr->entryName = "Credential Leaks";
+  this->AllResultEntries.push_back(std::move(entryPtr));
+}
+
 void resultInterpreter::interpretResults() {
 
   // Migrate data
@@ -46,15 +53,15 @@ void resultInterpreter::interpretResults() {
     std::vector<std::string> oldPathsCollection;
     if (vectorIt != results->pathsMap.end()) {
       oldPathsCollection = vectorIt->second; // Reference to existing vector
-
-    } else {
-      std::cerr << "Key not found\n";
     }
 
     entryPtr->paths = oldPathsCollection; // migrate the paths
 
     this->AllResultEntries.push_back(std::move(entryPtr));
   }
+
+  // Interpret leaks handler since they will never appear in the found map
+  interpretLeaks();
 
   // Call each indicateDeterminator afterwards
 
@@ -145,10 +152,6 @@ void resultEntry::noMoreThanOne(std::string name) {
 }
 
 void resultEntry::parentPrintEntry() {
-  // The data
-
-  /* Default option */
-  // this->Indication = "White";
 
   std::vector<std::string> paths = this->paths;
   fmt::print("{} {}\n", this->Indication, this->entryName);
@@ -243,3 +246,48 @@ void gitignoreEntry::indicatorDeterminator() {
 }
 
 void gitignoreEntry::printEntry() { parentPrintEntry(); }
+
+/**********************************************************
+ *                        Leaks Entry                     *
+ **********************************************************/
+
+void leaksEntry::indicatorDeterminator() {
+  // check if found --> red
+  auto &leaksMap = myResults->leaksReasonAndFilepathSet;
+
+  if (leaksMap.empty()) {
+    this->Indication = GREEN;
+  } else {
+    // There were leaks
+    this->Indication = RED;
+
+    for (auto &leak : leaksMap) {
+      this->IndicationReasons.push_back(leak);
+    }
+  }
+
+  if (Indication == GREEN) {
+    this->IndicationReason = "No issues detected";
+  }
+}
+
+void leaksEntry::printEntry() {
+
+  std::vector<std::pair<std::string, std::set<std::string>>> reasons =
+      this->IndicationReasons;
+  fmt::print("{} {}\n", this->Indication, this->entryName);
+  if (!this->IndicationReason.empty()) {
+    fmt::print("    Reason: {}\n", this->IndicationReason);
+  } else {
+    for (const auto &it : reasons) {
+      fmt::print("    Description: {}\n", it.first);
+
+      // Print each file path on a new line
+      for (const auto &file : it.second) {
+        fmt::print("      - {}\n", file);
+      }
+    }
+  }
+
+  fmt::print("\n");
+}
