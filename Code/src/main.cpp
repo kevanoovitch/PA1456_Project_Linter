@@ -25,9 +25,6 @@ int main() {
             << std::endl;
   std::cin >> userInput;
 
-  // DEBUGGING
-  userInput = "/home/kevin/Github_Repository/TimerApplication";
-
   // interpret input
 
   userInputHandler.pickStrategy(userInput);
@@ -58,6 +55,8 @@ int main() {
   theScanner.scanFor(licenseAlts, LICENSE);
 
   theScanner.scanFor(readmeAlts, README);
+
+  theScanner.scanForTest(testAlts, TEST_STRING);
 
   theScanner.scanGitAttributes();
 

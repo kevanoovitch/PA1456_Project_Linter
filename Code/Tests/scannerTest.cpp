@@ -116,6 +116,13 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
   myScanner.scanFor(readmeAlts, README);
   result = interpret.isFound(README);
   ASSERT_EQ(result, false) << "Expected to NOT find a readme but did";
+
+  //'Tests' test
+
+  myScanner.scanFor(testAlts, TEST_STRING);
+
+  result = interpret.isFound(TEST_STRING);
+  EXPECT_EQ(result, false);
 }
 
 TEST(ScannerGitOperations, findGitAtributes) {

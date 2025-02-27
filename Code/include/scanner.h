@@ -30,6 +30,7 @@ public:
   void scanFor(std::vector<std::string> searchAlts, std::string name);
   void pushBackPath(std::pair<std::string, std::string> entry);
   void scanGitAttributes();
+  void scanForTest(std::vector<std::string> searchAlts, std::string name);
 
   void runGitLeaks();
   void parseGitleaksOutput(const std::string &jsonFilePath);
@@ -67,9 +68,14 @@ public:
   Searcher(Scanner *scanner);
   std::vector<std::string> searchFor(std::string wherePath,
                                      std::string searchFor);
+  std::vector<std::string> endsWithFile(std::string wherePath,
+                                        std::string searchFor);
+  std::vector<std::string> contains(std::string wherePath,
+                                    std::string searchFor);
 
 private:
   Scanner *myScanner;
+  std::vector<std::string> search(std::string wherePath, std::string pattern);
 };
 
 /**********************************************************

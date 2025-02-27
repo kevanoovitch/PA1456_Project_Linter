@@ -19,7 +19,7 @@ struct scanResults {
 
   std::unordered_map<std::string, std::set<std::string>>
       leaksReasonAndFilepathSet;
-  // Default constructo for struct
+  // Default constructor for struct
   scanResults();
 };
 
@@ -139,4 +139,19 @@ private:
   void indicatorDeterminator() override;
   void printEntry() override;
   std::vector<std::pair<std::string, std::set<std::string>>> IndicationReasons;
+};
+
+/**********************************************************
+ *                        Tests Entry                     *
+ **********************************************************/
+
+class testEntry : public resultEntry {
+
+public:
+  testEntry(std::shared_ptr<scanResults> res) : resultEntry(res){};
+  testEntry();
+
+private:
+  void indicatorDeterminator() override;
+  void printEntry() override;
 };

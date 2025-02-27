@@ -9,6 +9,7 @@ extern const std::string LICENSE;
 extern const std::string REPOSITORY_PATH;
 extern const std::string WORKFLOW_PATH;
 extern const std::string README;
+extern const std::string TEST_STRING;
 
 extern const std::string RED;
 extern const std::string GREEN;
@@ -23,5 +24,6 @@ namespace CommonSearchTerms {
 extern std::vector<std::string> gitIgnoreAlts;
 extern std::vector<std::string> licenseAlts;
 extern std::vector<std::string> readmeAlts;
+extern std::vector<std::string> testAlts;
 
 } // namespace CommonSearchTerms

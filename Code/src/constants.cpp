@@ -7,6 +7,7 @@ const std::string LICENSE = "License";
 const std::string REPOSITORY_PATH = "../Repository";
 const std::string WORKFLOW_PATH = "../Repository/.github/workflows";
 const std::string README = "readMe";
+const std::string TEST_STRING = "tests";
 
 const std::string RED = "\U0001F534";
 const std::string GREEN = "\U0001F7E2";
@@ -25,5 +26,8 @@ std::vector<std::string> licenseAlts = {"LICENSE", "LICENSE.txt", "UNLICENSE",
                                         "UNLICENSE.TXT", "COPYING"};
 std::vector<std::string> readmeAlts = {"readme", "README", "README.md",
                                        "readme.md"};
+
+std::vector<std::string> testAlts = {"test",  "tests", "Test",
+                                     "Tests", "TEST",  "TESTS"};
 
 } // namespace CommonSearchTerms

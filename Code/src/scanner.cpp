@@ -56,6 +56,30 @@ void Scanner::scanForWorkflow() {
   }
 }
 
+void Scanner::scanForTest(std::vector<std::string> searchAlts,
+                          const std::string NAME) {
+  std::vector<std::string> resultVectorPaths;
+  bool foundAtleastOnce = false;
+  for (int i = 0; i < searchAlts.size(); i++) {
+
+    resultVectorPaths = mySearcher->contains(this->repoPath, searchAlts[i]);
+
+    if (resultVectorPaths.size() == 0 && foundAtleastOnce == false) {
+      // no paths meaning found nothing
+      this->setFoundMap(false, NAME);
+    } else {
+      // found one or more readme files
+      foundAtleastOnce = true;
+      this->setFoundMap(true, NAME);
+
+      for (int i = 0; i < resultVectorPaths.size(); i++) {
+        // Push back each path to the result struct
+        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+      }
+    }
+  }
+}
+
 void Scanner::scanFor(std::vector<std::string> searchAlts,
                       const std::string NAME) {
 
@@ -63,7 +87,7 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
   bool foundAtleastOnce = false;
   for (int i = 0; i < searchAlts.size(); i++) {
 
-    resultVectorPaths = mySearcher->searchFor(this->repoPath, searchAlts[i]);
+    resultVectorPaths = mySearcher->endsWithFile(this->repoPath, searchAlts[i]);
 
     if (resultVectorPaths.size() == 0 && foundAtleastOnce == false) {
       // no paths meaning found nothing
@@ -171,7 +195,8 @@ Searcher::Searcher(Scanner *scanner) { this->myScanner = scanner; }
 std::vector<std::string> Searcher::searchFor(std::string path,
                                              std::string searchFor) {
   std::vector<std::string> pathsToFoundFiles;
-  std::string pattern("(" + searchFor + "$)");
+
+  std::string pattern(searchFor + "$");
 
   std::regex r(pattern);
 
@@ -191,6 +216,44 @@ std::vector<std::string> Searcher::searchFor(std::string path,
 
   return pathsToFoundFiles;
 };
+
+std::vector<std::string> Searcher::search(std::string wherePath,
+                                          std::string pattern) {
+
+  std::vector<std::string> pathsToFoundFiles;
+
+  std::regex r(pattern);
+
+  for (auto const &dir_entry :
+       std::filesystem::recursive_directory_iterator(wherePath)) {
+    std::string filenamePathRelative =
+        dir_entry.path().string(); // Convert to string
+
+    if (regex_search(filenamePathRelative, r)) {
+
+      std::string filenamePathAbsolute =
+          std::filesystem::absolute(dir_entry).string();
+
+      pathsToFoundFiles.push_back(filenamePathAbsolute);
+    }
+  }
+
+  return pathsToFoundFiles;
+}
+
+std::vector<std::string> Searcher::endsWithFile(std::string wherePath,
+                                                std::string searchFor) {
+  std::string pattern = (searchFor + "$");
+
+  return this->search(wherePath, pattern);
+}
+
+std::vector<std::string> Searcher::contains(std::string wherePath,
+                                            std::string searchFor) {
+  std::string pattern = (searchFor);
+
+  return this->search(wherePath, pattern);
+}
 
 /**********************************************************
  *                          gitScanner                    *

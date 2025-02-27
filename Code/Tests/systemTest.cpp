@@ -40,6 +40,8 @@ protected:
     theScanner->scanForWorkflow();
     theScanner->scanFor(licenseAlts, LICENSE);
     theScanner->scanFor(readmeAlts, README);
+    theScanner->scanFor(testAlts, TEST_STRING);
+    theScanner->scanForTest(testAlts, TEST_STRING);
     theScanner->scanGitAttributes();
     theScanner->runGitLeaks();
 

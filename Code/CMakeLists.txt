@@ -67,7 +67,7 @@ FetchContent_MakeAvailable(json)
 target_link_libraries(linterLib PRIVATE nlohmann_json::nlohmann_json)
 
 # Define a manual toggle for testing mode
-set(ENABLE_TESTS ON)  # Change to ON if you want to build the test executable
+set(ENABLE_TESTS OFF)  # Change to ON if you want to build the test executable
 
 if(ENABLE_TESTS)
     message(STATUS "Building test executable")

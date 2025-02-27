@@ -31,15 +31,18 @@ object "License" {
   NoneOfTheAbove = 🟢
 }
 
-object "Test" <<TestObject>>{
-    
-  <<Only search and flag for the string "test">>
+object "Credentials"{
+  gitLeaks Report not empty = 🔴
+  NoneOfTheAbove = 🟢
 }
 
-skinparam object {
-  BackgroundColor<<TestObject>> LightYellow
-  BorderColor<<TestObject>> Black
+object "Test"{
+    
+  any dir_entry contains 'test' = 🟡
+  NoneOfTheAbove = 🟢
 }
+
+
 
 
 

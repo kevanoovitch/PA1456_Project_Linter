@@ -80,6 +80,8 @@ resultInterpreter::pickAndCreateEntry(std::string name) {
     return std::make_unique<workflowEntry>(results);
   } else if (name == GIT_IGNORE) {
     return std::make_unique<gitignoreEntry>(results);
+  } else if (name == TEST_STRING) {
+    return std::make_unique<testEntry>(results);
   } else {
     throw std::runtime_error("Unknown entry type: " + name);
   }
@@ -123,6 +125,7 @@ scanResults::scanResults() {
   this->foundMap[WORKFLOW_STRING] = false;
   this->foundMap[LICENSE] = false;
   this->foundMap[README] = false;
+  this->foundMap[TEST_STRING] = false;
 }
 
 /**********************************************************
@@ -291,3 +294,22 @@ void leaksEntry::printEntry() {
 
   fmt::print("\n");
 }
+
+/**********************************************************
+ *                        Tests Entry                     *
+ **********************************************************/
+void testEntry::indicatorDeterminator() {
+
+  // check if found --> yellow
+  if (myResults->foundMap[TEST_STRING] == true) {
+    /* Found files containing test which is bad */
+    this->Indication = YELLOW;
+    this->IndicationReason =
+        "Found files named test, does it really need to be called 'test'?";
+  } else {
+    this->Indication = GREEN;
+    this->IndicationReason = "No issues detected";
+  }
+}
+
+void testEntry::printEntry() { parentPrintEntry(); }
