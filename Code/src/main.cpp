@@ -42,7 +42,6 @@ int main() {
   userInputHandler.executeStrategy();
 
   // Scanning
-  std::cout << "cloning done, procceeding to scan" << std::endl;
 
   Scanner theScanner(userInputHandler);
 

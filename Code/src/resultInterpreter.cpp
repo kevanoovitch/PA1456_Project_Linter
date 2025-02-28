@@ -300,16 +300,46 @@ void leaksEntry::printEntry() {
  **********************************************************/
 void testEntry::indicatorDeterminator() {
 
-  // check if found --> yellow
-  if (myResults->foundMap[TEST_STRING] == true) {
-    /* Found files containing test which is bad */
-    this->Indication = YELLOW;
-    this->IndicationReason =
-        "Found files named test, does it really need to be called 'test'?";
-  } else {
+  // create a fileManager object
+  fileManager testFsHelper;
+
+  if (myResults->foundMap[TEST_STRING] == false) {
+    /* No unit test found which is bad */
+    this->Indication = RED;
+    this->IndicationReason = "No unit tests found!";
+    return;
+  }
+
+  // for each path entry
+  auto &vec = this->paths;
+  for (auto it = vec.begin(); it != vec.end();) {
+    // Check contents
+
+    if (!testFsHelper.checkContentsIsEmpty(*it)) {
+
+      // remove paths that lead to testing dir/files with contents
+
+      it = vec.erase(it);
+
+    } else {
+      it++;
+    }
+  }
+
+  // make determinations
+
+  if (vec.empty()) {
+    /* all paths had contents */
+
     this->Indication = GREEN;
     this->IndicationReason = "No issues detected";
+    return;
   }
+
+  // Some paths were empty
+
+  this->Indication = YELLOW;
+  this->IndicationReason = "Theese testing entries lacked content";
 }
 
 void testEntry::printEntry() { parentPrintEntry(); }

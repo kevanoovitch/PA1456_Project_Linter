@@ -1,4 +1,5 @@
 #include "fileManager.h"
+#include <fstream>
 #include <iostream>
 
 void fileManager::clearDir(std::string path) {
@@ -60,4 +61,52 @@ bool fileManager::checkValidRepoPath(std::string path) {
   }
 
   return true;
+}
+
+bool fileManager::checkIsDir(std::string path) {
+
+  std::filesystem::path fsPath = this->stringToPath(path);
+
+  if (std::filesystem::is_directory(fsPath)) {
+    return true;
+  }
+
+  return false;
+}
+
+std::filesystem::path fileManager::stringToPath(std::string str) {
+
+  std::filesystem::path path = str;
+  return path;
+}
+
+bool fileManager::checkContentsIsEmpty(std::string path) {
+  // Determine if its a dir
+
+  if (this->checkIsDir(path)) {
+
+    // Do dir checkContents
+    return this->dirIsEmpty(path);
+  }
+
+  // Else do file checkContetns
+  return fileIsEmpty(path);
+}
+
+bool fileManager::dirIsEmpty(std::string path) {
+
+  auto it = std::filesystem::directory_iterator(path);
+  if (it != std::filesystem::directory_iterator(path)) {
+    // dir is not empty
+    return false;
+  } else {
+    return true;
+  }
+}
+
+bool fileManager::fileIsEmpty(std::string path) {
+
+  std::ifstream file(path);
+
+  return file.peek() == std::ifstream::traits_type::eof();
 }

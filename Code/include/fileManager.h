@@ -12,4 +12,12 @@ public:
   bool isEmpty(std::string path);
   bool dirExists(std::string path);
   bool checkValidRepoPath(std::string path);
+
+  bool checkContentsIsEmpty(std::string path);
+
+private:
+  std::filesystem::path stringToPath(std::string string);
+  bool checkIsDir(std::string path);
+  bool dirIsEmpty(std::string path);
+  bool fileIsEmpty(std::string path);
 };
