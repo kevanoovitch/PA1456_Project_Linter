@@ -66,6 +66,7 @@ protected:
 
   void VerifyIfFound(std::string name);
   void noMoreThanOne(std::string name);
+  void checkContents();
   void parentPrintEntry();
 };
 

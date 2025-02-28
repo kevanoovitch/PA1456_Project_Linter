@@ -20,7 +20,6 @@ object "Workflow" {
   Missing_Workflows = 🔴
   Missing_Files_in_Workflows = 🔴
   MoreThanOne = Allowed
-  LacksContents = 🟡
   NoneOfTheAbove = 🟢
 }
 
@@ -37,8 +36,8 @@ object "Credentials"{
 }
 
 object "Test"{
-    
-  any dir_entry contains 'test' = 🟡
+  Missing = 🔴
+  LacksContents = 🟡
   NoneOfTheAbove = 🟢
 }
 

@@ -166,6 +166,37 @@ void resultEntry::parentPrintEntry() {
   fmt::print("\n");
 }
 
+void resultEntry::checkContents() {
+
+  fileManager testFsHelper;
+
+  // for each path entry
+  auto &vec = this->paths;
+  for (auto it = vec.begin(); it != vec.end();) {
+    // Check contents
+
+    if (!testFsHelper.checkContentsIsEmpty(*it)) {
+
+      // remove paths that lead to testing dir/files with contents
+
+      it = vec.erase(it);
+
+    } else {
+      it++;
+    }
+  }
+
+  // Determine yellow if the vector is not empty
+
+  if (!vec.empty()) {
+    /* all paths had contents */
+
+    this->Indication = YELLOW;
+    this->IndicationReason = "Theese files/dirs had no content";
+    return;
+  }
+}
+
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
@@ -182,6 +213,7 @@ void readmeEntry::indicatorDeterminator() {
   this->noMoreThanOne(README);
 
   // check contents --> yellow/red
+  this->checkContents();
 
   // Implicit indication
   if (Indication == GREEN) {
@@ -204,6 +236,7 @@ void licenseEntry::indicatorDeterminator() {
   this->VerifyIfFound(LICENSE);
 
   // check contents --> yellow/red
+  this->checkContents();
 
   // Implicit indication
   if (Indication == GREEN) {
@@ -241,6 +274,7 @@ void gitignoreEntry::indicatorDeterminator() {
   this->noMoreThanOne(GIT_IGNORE);
 
   // check contents --> yellow/red
+  this->checkContents();
 
   // Implicit indication
   if (Indication == GREEN) {
