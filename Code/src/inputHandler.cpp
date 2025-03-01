@@ -5,6 +5,20 @@
 
 using namespace constants;
 
+/**********************************************************
+ *                          Scan Results                  *
+ **********************************************************/
+
+scanResults::scanResults() {
+  this->foundMap[GIT_IGNORE] = false;
+  this->foundMap[WORKFLOW_STRING] = false;
+  this->foundMap[LICENSE] = false;
+  this->foundMap[README] = false;
+  this->foundMap[TEST_STRING] = false;
+}
+
+scanResults::~scanResults() {}
+
 inputHandler::inputHandler() {
   this->isUrl = false;
   this->setInput("");
@@ -17,11 +31,6 @@ inputHandler::inputHandler() {
 
 inputHandler::~inputHandler() {
   delete this->inputStrategy;
-  auto &repo = this->sharedResult->repo;
-  if (repo) { // Check if repo is valid before freeing
-    git_repository_free(repo);
-    repo = nullptr; // Prevent dangling pointer
-  }
   delete this->fileManagerPtr;
 }
 

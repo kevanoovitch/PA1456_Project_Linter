@@ -1,5 +1,6 @@
 #include "resultInterpreter.h"
 #include "constants.h"
+#include "git2.h"
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -118,18 +119,6 @@ void resultInterpreter::printGitAttributes() {
 }
 
 /**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-scanResults::scanResults() {
-  this->foundMap[GIT_IGNORE] = false;
-  this->foundMap[WORKFLOW_STRING] = false;
-  this->foundMap[LICENSE] = false;
-  this->foundMap[README] = false;
-  this->foundMap[TEST_STRING] = false;
-}
-
-/**********************************************************
  *                  Result Entry Strategy                 *
  **********************************************************/
 resultEntry::resultEntry(std::shared_ptr<scanResults> res) {
@@ -198,7 +187,21 @@ void resultEntry::checkContents() {
   }
 }
 
-bool resultEntry::crossRefrenceIgnore(std::string path) { return true; }
+bool resultEntry::crossRefrenceIgnore(std::string path) {
+
+  auto &repo = this->sharedResult->repo;
+
+  int crossRefResult = 0;
+
+  git_ignore_path_is_ignored(&crossRefResult, repo, path.c_str());
+
+  // If crossRefResult is 1, the path is ignored;
+  if (crossRefResult == 1) {
+    return true;
+  }
+
+  return false;
+}
 
 /**********************************************************
  *                        ReadMe                           *
@@ -340,6 +343,28 @@ void testEntry::indicatorDeterminator() {
   // create a fileManager object
   fileManager testFsHelper;
 
+  // cross refrence and remove all files that are ignore accroding to the
+  // gitIgnore
+  auto &vec = this->paths;
+
+  if (this->sharedResult->foundMap[GIT_IGNORE] == true) {
+    // Only crossRef if there is a gitIgnore
+
+    for (auto it = vec.begin(); it != vec.end();) {
+      // Check contents
+
+      if (crossRefrenceIgnore(*it) == true) {
+
+        // remove paths that are ignored
+
+        it = vec.erase(it);
+
+      } else {
+        it++;
+      }
+    }
+  }
+
   if (sharedResult->foundMap[TEST_STRING] == false) {
     /* No unit test found which is bad */
     this->Indication = RED;
@@ -348,7 +373,7 @@ void testEntry::indicatorDeterminator() {
   }
 
   // for each path entry
-  auto &vec = this->paths;
+
   for (auto it = vec.begin(); it != vec.end();) {
     // Check contents
 

@@ -28,6 +28,7 @@ struct scanResults {
       leaksReasonAndFilepathSet;
   // Default constructor for struct
   scanResults();
+  ~scanResults();
 };
 
 /**********************************************************
