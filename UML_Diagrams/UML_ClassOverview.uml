@@ -41,21 +41,27 @@ abstract Strategy{
     
 }
 struct scanResult
+{
+    +repoPtr <<shared>> 
+    +foundMap : map<string,bool>
+    +pathsMap : map<string,vector<string>>
+    +nrOfCommits : int
+    +Contributors: set<string>
+    +leaksReasonAndFilepathSet : map<string,set<string>>
 
-
-'class batchHandler 'optional RQ
-'class dockerHandler 'optional RQ
-
+}
 
 
 'Relations
 scanner -->  ResultInterpreter
-inputHandler --> scanner
-scanner -- scanResult
+inputHandler --> scanner : "Passes shared ptr" 
+inputHandler --> scanResult : creates and owns
+inputHandler --> ResultInterpreter : "Passes shared ptr" 
 Strategy --"1" inputHandler : Strategy Pattern
 Strategy <|-- typeURL
 Strategy <|-- typeFolder
-fs -- inputHandler
+fs -- inputHandler : uses
+fs -- ResultInterpreter : uses
 
 ResultInterpreter -- scanResult
 

@@ -11,12 +11,13 @@ inputHandler::inputHandler() {
   this->localPath = REPOSITORY_PATH;
   this->inputStrategy = nullptr;
   this->setProcessSuccess(false);
-  this->repo = nullptr;
+
   this->fileManagerPtr = new fileManager;
 }
 
 inputHandler::~inputHandler() {
   delete this->inputStrategy;
+  auto &repo = this->sharedResult->repo;
   if (repo) { // Check if repo is valid before freeing
     git_repository_free(repo);
     repo = nullptr; // Prevent dangling pointer
@@ -117,7 +118,7 @@ std::string typeURL::getInput() { return parentInputHandler->getInput(); }
 void typeURL::proccessInput() {
   std::string url = getInput();
 
-  if (int err = git_clone(&parentInputHandler->repo, url.c_str(),
+  if (int err = git_clone(&parentInputHandler->sharedResult->repo, url.c_str(),
                           localPath.c_str(), NULL) != 0) {
     // error in cloning
 
@@ -142,8 +143,8 @@ void typeFolder::proccessInput() {
   std::string path = getInput();
 
   // set the repo
-  int error =
-      git_repository_init(&parentInputHandler->repo, path.c_str(), false);
+  int error = git_repository_init(&parentInputHandler->sharedResult->repo,
+                                  path.c_str(), false);
 
   // Need to change the scan dir
   parentInputHandler->localPath = path;

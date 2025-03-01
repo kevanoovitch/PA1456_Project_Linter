@@ -9,13 +9,13 @@ using namespace constants;
  *                  Result Interpreter                    *
  **********************************************************/
 
-resultInterpreter::resultInterpreter(std::shared_ptr<scanResults> res) {
-  this->results = res;
+resultInterpreter::resultInterpreter(const inputHandler &inputHandler) {
+  this->sharedResult = inputHandler.sharedResult;
 }
 
 bool resultInterpreter::isFound(std::string resultEntry) {
 
-  std::unordered_map<std::string, bool> &map = results->foundMap;
+  std::unordered_map<std::string, bool> &map = sharedResult->foundMap;
   auto it = map.find(resultEntry);
   if (it != map.end()) {
     if (it->second == true) {
@@ -27,7 +27,8 @@ bool resultInterpreter::isFound(std::string resultEntry) {
 
 void resultInterpreter::interpretLeaks() {
 
-  std::unique_ptr<resultEntry> entryPtr = std::make_unique<leaksEntry>(results);
+  std::unique_ptr<resultEntry> entryPtr =
+      std::make_unique<leaksEntry>(sharedResult);
   entryPtr->entryName = "Credential Leaks";
   this->AllResultEntries.push_back(std::move(entryPtr));
 }
@@ -36,7 +37,7 @@ void resultInterpreter::interpretResults() {
 
   // Migrate data
   // Look through the whole found map
-  for (auto it : results->foundMap) {
+  for (auto it : sharedResult->foundMap) {
 
     std::string currrentName = it.first;
 
@@ -49,9 +50,9 @@ void resultInterpreter::interpretResults() {
     entryPtr->isFound = it.second;
 
     // move the paths from the map to the entry object
-    auto vectorIt = results->pathsMap.find(currrentName);
+    auto vectorIt = sharedResult->pathsMap.find(currrentName);
     std::vector<std::string> oldPathsCollection;
-    if (vectorIt != results->pathsMap.end()) {
+    if (vectorIt != sharedResult->pathsMap.end()) {
       oldPathsCollection = vectorIt->second; // Reference to existing vector
     }
 
@@ -73,15 +74,15 @@ void resultInterpreter::interpretResults() {
 std::unique_ptr<resultEntry>
 resultInterpreter::pickAndCreateEntry(std::string name) {
   if (name == README) {
-    return std::make_unique<readmeEntry>(results);
+    return std::make_unique<readmeEntry>(sharedResult);
   } else if (name == LICENSE) {
-    return std::make_unique<licenseEntry>(results);
+    return std::make_unique<licenseEntry>(sharedResult);
   } else if (name == WORKFLOW_STRING) {
-    return std::make_unique<workflowEntry>(results);
+    return std::make_unique<workflowEntry>(sharedResult);
   } else if (name == GIT_IGNORE) {
-    return std::make_unique<gitignoreEntry>(results);
+    return std::make_unique<gitignoreEntry>(sharedResult);
   } else if (name == TEST_STRING) {
-    return std::make_unique<testEntry>(results);
+    return std::make_unique<testEntry>(sharedResult);
   } else {
     throw std::runtime_error("Unknown entry type: " + name);
   }
@@ -107,11 +108,11 @@ void resultInterpreter::printDetails() {
 
 void resultInterpreter::printGitAttributes() {
 
-  std::set<std::string> &set = this->results->resultContributors;
+  std::set<std::string> &set = this->sharedResult->resultContributors;
 
   fmt::print("\n📌 Repository Stats\n");
   fmt::print("═════════════════════════════\n");
-  fmt::print("🔢 Total Commits: {}\n", this->results->resultNrOfCommits);
+  fmt::print("🔢 Total Commits: {}\n", this->sharedResult->resultNrOfCommits);
   fmt::print("👥 Contributors:\n{} \n", fmt::join(set, "\n"));
   fmt::print("═════════════════════════════\n");
 }
@@ -132,14 +133,14 @@ scanResults::scanResults() {
  *                  Result Entry Strategy                 *
  **********************************************************/
 resultEntry::resultEntry(std::shared_ptr<scanResults> res) {
-  this->myResults = res;
+  this->sharedResult = res;
   this->Indication = WHITE;
 }
 
 resultEntry::resultEntry() { this->Indication = WHITE; }
 
 void resultEntry::VerifyIfFound(std::string name) {
-  if (myResults->foundMap[name] == false) {
+  if (sharedResult->foundMap[name] == false) {
     this->Indication = RED;
     this->IndicationReason = "Was not found";
   } else {
@@ -197,11 +198,13 @@ void resultEntry::checkContents() {
   }
 }
 
+bool resultEntry::crossRefrenceIgnore(std::string path) { return true; }
+
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
 readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
-  this->myResults = res;
+  this->sharedResult = res;
   this->Indication = WHITE;
 }
 
@@ -228,7 +231,7 @@ void readmeEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
   this->Indication = WHITE;
-  this->myResults = res;
+  this->sharedResult = res;
 }
 
 void licenseEntry::indicatorDeterminator() {
@@ -290,7 +293,7 @@ void gitignoreEntry::printEntry() { parentPrintEntry(); }
 
 void leaksEntry::indicatorDeterminator() {
   // check if found --> red
-  auto &leaksMap = myResults->leaksReasonAndFilepathSet;
+  auto &leaksMap = sharedResult->leaksReasonAndFilepathSet;
 
   if (leaksMap.empty()) {
     this->Indication = GREEN;
@@ -337,7 +340,7 @@ void testEntry::indicatorDeterminator() {
   // create a fileManager object
   fileManager testFsHelper;
 
-  if (myResults->foundMap[TEST_STRING] == false) {
+  if (sharedResult->foundMap[TEST_STRING] == false) {
     /* No unit test found which is bad */
     this->Indication = RED;
     this->IndicationReason = "No unit tests found!";

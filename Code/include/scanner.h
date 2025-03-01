@@ -15,6 +15,7 @@
 class Searcher;
 struct scanResults;
 class GitScanner;
+class inputHandler;
 
 /**********************************************************
  *                          Scanner                       *
@@ -22,7 +23,6 @@ class GitScanner;
 
 class Scanner {
 public:
-  Scanner();
   Scanner(const inputHandler &inputHandler);
   ~Scanner();
 
@@ -38,12 +38,11 @@ public:
   void setRepoPath(std::string path);
   void setFoundMap(bool isFound, const std::string name);
 
-  std::shared_ptr<scanResults> myResults;
+  std::shared_ptr<scanResults> sharedResult;
 
 private:
   Searcher *mySearcher;
   std::string repoPath;
-  git_repository *repo;
   fileManager *fileManagerPtr;
   GitScanner *myGitScanner;
 

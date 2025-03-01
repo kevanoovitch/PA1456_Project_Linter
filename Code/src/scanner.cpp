@@ -15,21 +15,11 @@ using namespace constants;
  *                          Scanner                       *
  **********************************************************/
 
-Scanner::Scanner() {
-  this->mySearcher = new Searcher(this);
-  this->myResults = std::make_shared<scanResults>();
-  this->repoPath = REPOSITORY_PATH;
-  this->fileManagerPtr = new fileManager;
-  this->repo = nullptr;
-  this->myGitScanner = new GitScanner(this);
-}
-
 Scanner::Scanner(const inputHandler &inputHandler) {
   this->mySearcher = new Searcher(this);
-  this->myResults = std::make_shared<scanResults>();
+  this->sharedResult = inputHandler.sharedResult;
   this->repoPath = inputHandler.localPath;
   this->fileManagerPtr = new fileManager;
-  this->repo = inputHandler.repo;
   this->myGitScanner = new GitScanner(this);
 }
 
@@ -46,7 +36,7 @@ void Scanner::scanForWorkflow() {
   if (fileManagerPtr->dirExists(this->repoPath + "/.github/workflows") ==
       false) {
 
-    myResults->foundMap[WORKFLOW_STRING] = false;
+    sharedResult->foundMap[WORKFLOW_STRING] = false;
 
   } else {
 
@@ -74,7 +64,7 @@ void Scanner::scanForTest(std::vector<std::string> searchAlts,
 
       for (int i = 0; i < resultVectorPaths.size(); i++) {
         // Push back each path to the result struct
-        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+        sharedResult->pathsMap[NAME].push_back(resultVectorPaths[i]);
       }
     }
   }
@@ -99,7 +89,7 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
 
       for (int i = 0; i < resultVectorPaths.size(); i++) {
         // Push back each path to the result struct
-        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+        sharedResult->pathsMap[NAME].push_back(resultVectorPaths[i]);
       }
     }
   }
@@ -107,33 +97,33 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
 
 void Scanner::setFoundMap(bool isFound, std::string Name) {
   if (isFound == true) {
-    myResults->foundMap[Name] = true;
+    sharedResult->foundMap[Name] = true;
   }
 }
 
 void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
 
-  myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
+  sharedResult->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
 void Scanner::scanGitAttributes() {
 
-  if (this->repo == nullptr) {
+  if (this->sharedResult->repo == nullptr) {
     std::cerr << "Error in Scanner::scanGitAttributes() repo was nullptr\n";
     return;
   }
 
   // count commits
-  int nrOfCommits = this->myGitScanner->countCommits(this->repo);
+  int nrOfCommits = this->myGitScanner->countCommits(this->sharedResult->repo);
 
   // build set of contributors
   std::set<std::string> Contributors =
-      this->myGitScanner->countContributors(this->repo);
+      this->myGitScanner->countContributors(this->sharedResult->repo);
 
   // Write results to struct
 
-  this->myResults->resultContributors = Contributors;
-  this->myResults->resultNrOfCommits = nrOfCommits;
+  this->sharedResult->resultContributors = Contributors;
+  this->sharedResult->resultNrOfCommits = nrOfCommits;
 }
 
 void Scanner::setRepoPath(std::string path) { this->repoPath = path; }
@@ -153,7 +143,7 @@ void Scanner::parseGitleaksOutput(const std::string &jsonFilePath) {
     // 🔹 Loop through each detected secret
     for (const auto &leak : report) {
 
-      auto &leaksmap = this->myResults->leaksReasonAndFilepathSet;
+      auto &leaksmap = this->sharedResult->leaksReasonAndFilepathSet;
 
       leaksmap[leak["Description"]].insert(leak["File"]);
     }

@@ -1,5 +1,6 @@
 #pragma once
 #include "fileManager.h"
+#include "resultInterpreter.h"
 #include <git2.h>
 #include <gtest/gtest.h>
 #include <string>
@@ -12,6 +13,24 @@ class Strategy; // Forward declare Strategy since we just need a pointer in
                 // inputHandler
 
 /**********************************************************
+ *                          Scan Results                  *
+ **********************************************************/
+
+struct scanResults {
+  git_repository *repo;
+  std::unordered_map<std::string, bool> foundMap;
+  std::unordered_map<std::string, std::vector<std::string>> pathsMap;
+
+  int resultNrOfCommits;
+  std::set<std::string> resultContributors;
+
+  std::unordered_map<std::string, std::set<std::string>>
+      leaksReasonAndFilepathSet;
+  // Default constructor for struct
+  scanResults();
+};
+
+/**********************************************************
  *                  InputHandler                          *
  **********************************************************/
 
@@ -22,13 +41,15 @@ public:
   ~inputHandler();
   bool getIsUrl();
   void setInput(std::string const in);
-  git_repository *repo;
+
   void setProcessSuccess(bool flag);
   void pickStrategy(std::string input);
   void executeStrategy();
   std::string getInput();
   Strategy *getStrategyPtr();
   std::string localPath;
+
+  std::shared_ptr<scanResults> sharedResult = std::make_shared<scanResults>();
 
 private:
   bool argumentChecker(std::string arg);

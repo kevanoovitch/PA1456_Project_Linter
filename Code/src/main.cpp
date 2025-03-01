@@ -45,7 +45,7 @@ int main() {
 
   Scanner theScanner(userInputHandler);
 
-  resultInterpreter theResult(theScanner.myResults);
+  resultInterpreter theResult(userInputHandler);
 
   theScanner.scanFor(gitIgnoreAlts, GIT_IGNORE);
 
