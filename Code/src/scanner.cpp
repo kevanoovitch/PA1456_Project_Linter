@@ -154,8 +154,8 @@ void Scanner::parseGitleaksOutput(const std::string &jsonFilePath) {
 
 void Scanner::runGitLeaks() {
 
-  std::string command =
-      "gitleaks dir " + repoPath + " -r " + PATH_REPORT_CREDENTIALS + " 2>&1";
+  std::string command = "gitleaks dir " + repoPath + " -r " +
+                        PATH_REPORT_CREDENTIALS + " --no-banner";
 
   FILE *pipe = popen(command.c_str(), "r");
   if (!pipe) {
