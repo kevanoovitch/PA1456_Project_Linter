@@ -69,9 +69,9 @@ FetchContent_MakeAvailable(json)
 target_link_libraries(linterLib PRIVATE nlohmann_json::nlohmann_json)
 
 # Define a manual toggle for testing mode
-set(ENABLE_TESTS ON)  # Change to ON if you want to build the test executable
+option(TESTS "Enable test build" OFF)  # Default OFF, change in CMake cache or presets
 
-if(ENABLE_TESTS)
+if(TESTS)
     message(STATUS "Building test executable")
     add_executable(linterTests 
         Tests/testArgs.cpp 
