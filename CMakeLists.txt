@@ -31,7 +31,8 @@ FetchContent_Declare(
 )
 
 FetchContent_MakeAvailable(googletest)
-
+# Ensure gtest is linked to linterLib
+target_link_libraries(linterLib PUBLIC GTest::gtest_main)
 
 # ----------------------------
 # Library: libgit2
