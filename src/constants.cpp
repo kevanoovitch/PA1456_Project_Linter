@@ -17,6 +17,19 @@ const std::string WHITE = "\u26AA";
 extern const std::string PATH_REPORT_CREDENTIALS =
     "../Repository/gitleaksReport.json";
 
+const std::string linkLicense = "https://choosealicense.com/";
+const std::string linkReadme =
+    "https://docs.github.com/en/repositories/"
+    "managing-your-repositorys-settings-and-features/"
+    "customizing-your-repository/about-readmes";
+const std::string linkIgnore = "https://github.com/github/gitignore";
+const std::string linkTests = "https://learn.microsoft.com/en-us/dotnet/core/"
+                              "testing/unit-testing-best-practices";
+const std::string linkWorkflow =
+    "https://docs.github.com/en/actions/writing-workflows";
+
+const std::string NIL = "No issues detected";
+
 } // namespace constants
 
 namespace CommonSearchTerms {

@@ -149,6 +149,11 @@ void resultEntry::parentPrintEntry() {
   std::vector<std::string> paths = this->paths;
   fmt::print("{} {}\n", this->Indication, this->entryName);
   fmt::print("    Reason: {}\n", this->IndicationReason);
+
+  if (this->Indication == RED) {
+    fmt::print("    Read more:\n    {}\n", this->readMore);
+  }
+
   fmt::print("    Paths:\n");
   for (const auto &path : paths) {
     fmt::print("      - {}\n", path);
@@ -212,6 +217,10 @@ readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
 }
 
 void readmeEntry::indicatorDeterminator() {
+
+  // Prepare the link to read more
+  readMore = linkReadme;
+
   // check if not found --> red
   this->VerifyIfFound(README);
 
@@ -223,7 +232,7 @@ void readmeEntry::indicatorDeterminator() {
 
   // Implicit indication
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
@@ -238,6 +247,10 @@ licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
 }
 
 void licenseEntry::indicatorDeterminator() {
+
+  // Prepare the link to read more
+  readMore = linkLicense;
+
   // check if not found --> red
   this->VerifyIfFound(LICENSE);
 
@@ -257,6 +270,10 @@ void licenseEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void workflowEntry::indicatorDeterminator() {
+
+  // Prepare the link to read more
+  readMore = linkWorkflow;
+
   // check if not found --> red
   this->VerifyIfFound(WORKFLOW_STRING);
 
@@ -273,6 +290,10 @@ void workflowEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void gitignoreEntry::indicatorDeterminator() {
+
+  // Prepare the link to read more
+  readMore = linkIgnore;
+
   // check if not found --> red
   this->VerifyIfFound(GIT_IGNORE);
 
@@ -340,6 +361,9 @@ void leaksEntry::printEntry() {
  **********************************************************/
 void testEntry::indicatorDeterminator() {
 
+  // Prepare the link to read more
+  readMore = linkTests;
+
   // create a fileManager object
   fileManager testFsHelper;
 
@@ -401,7 +425,7 @@ void testEntry::indicatorDeterminator() {
   // Some paths were empty
 
   this->Indication = YELLOW;
-  this->IndicationReason = "Theese testing entries lacked content";
+  this->IndicationReason = "These testing entries lacked content";
 }
 
 void testEntry::printEntry() { parentPrintEntry(); }

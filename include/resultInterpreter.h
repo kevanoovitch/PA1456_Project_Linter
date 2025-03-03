@@ -45,6 +45,7 @@ public:
   bool isFound;
   std::string Indication;
   std::string IndicationReason;
+  std::string readMore;
 
 protected:
   std::shared_ptr<scanResults> sharedResult;

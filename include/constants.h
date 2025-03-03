@@ -16,6 +16,14 @@ extern const std::string GREEN;
 extern const std::string YELLOW;
 extern const std::string WHITE;
 
+extern const std::string linkLicense;
+extern const std::string linkReadme;
+extern const std::string linkIgnore;
+extern const std::string linkTests;
+extern const std::string linkWorkflow;
+
+extern const std::string NIL;
+
 extern const std::string PATH_REPORT_CREDENTIALS;
 
 } // namespace constants
