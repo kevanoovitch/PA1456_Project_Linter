@@ -1,0 +1,74 @@
+[
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/inputHandler.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/inputHandler.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/inputHandler.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/inputHandler.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/main.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/main.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/main.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/fileManager.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/fileManager.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/fileManager.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/fileManager.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/scanner.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/scanner.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/scanner.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/scanner.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/resultInterpreter.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/resultInterpreter.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/resultInterpreter.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/resultInterpreter.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/src/constants.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/src/constants.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/src/constants.cpp",
+  "output": "CMakeFiles/linterLib.dir/src/constants.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -I/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-src/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterLib.dir/Tests/testArgs.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/testArgs.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/testArgs.cpp",
+  "output": "CMakeFiles/linterLib.dir/Tests/testArgs.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterTests.dir/Tests/testArgs.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/testArgs.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/testArgs.cpp",
+  "output": "CMakeFiles/linterTests.dir/Tests/testArgs.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterTests.dir/Tests/mainTest.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/mainTest.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/mainTest.cpp",
+  "output": "CMakeFiles/linterTests.dir/Tests/mainTest.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterTests.dir/Tests/inputTest.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/inputTest.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/inputTest.cpp",
+  "output": "CMakeFiles/linterTests.dir/Tests/inputTest.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterTests.dir/Tests/scannerTest.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/scannerTest.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/scannerTest.cpp",
+  "output": "CMakeFiles/linterTests.dir/Tests/scannerTest.cpp.o"
+},
+{
+  "directory": "/home/kevin/Github_Repository/-PA1456-Project-Linter/build",
+  "command": "/usr/bin/g++  -I/home/kevin/Github_Repository/-PA1456-Project-Linter/include -I/home/kevin/.local/include -I/home/kevin/libs/fmt/include -g -std=gnu++20 -DGTEST_HAS_PTHREAD=1 -o CMakeFiles/linterTests.dir/Tests/systemTest.cpp.o -c /home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/systemTest.cpp",
+  "file": "/home/kevin/Github_Repository/-PA1456-Project-Linter/Tests/systemTest.cpp",
+  "output": "CMakeFiles/linterTests.dir/Tests/systemTest.cpp.o"
+}
+]

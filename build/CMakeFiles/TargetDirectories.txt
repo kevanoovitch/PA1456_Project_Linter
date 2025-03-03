@@ -1,0 +1,6 @@
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/CMakeFiles/linterLib.dir
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/CMakeFiles/linterTests.dir
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/CMakeFiles/edit_cache.dir
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/CMakeFiles/rebuild_cache.dir
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-build/CMakeFiles/edit_cache.dir
+/home/kevin/Github_Repository/-PA1456-Project-Linter/build/_deps/json-build/CMakeFiles/rebuild_cache.dir

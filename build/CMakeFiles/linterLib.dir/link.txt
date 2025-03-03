@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblinterLib.a CMakeFiles/linterLib.dir/src/inputHandler.cpp.o CMakeFiles/linterLib.dir/src/main.cpp.o CMakeFiles/linterLib.dir/src/fileManager.cpp.o CMakeFiles/linterLib.dir/src/scanner.cpp.o CMakeFiles/linterLib.dir/src/resultInterpreter.cpp.o CMakeFiles/linterLib.dir/src/constants.cpp.o CMakeFiles/linterLib.dir/Tests/testArgs.cpp.o
+/usr/bin/ranlib liblinterLib.a

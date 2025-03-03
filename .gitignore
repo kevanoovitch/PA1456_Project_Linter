@@ -16,3 +16,5 @@ Code/Repository/*
 *.clang-format
 
 .vscode/
+
+UML_Diagrams/out 

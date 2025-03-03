@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/linter.dir/src/main.cpp.o -o linter  -Wl,-rpath,/home/kevin/.local/lib liblinterLib.a /usr/lib/x86_64-linux-gnu/libgtest_main.a /usr/lib/x86_64-linux-gnu/libgtest.a /home/kevin/.local/lib/libgit2.so /home/kevin/libs/fmt/build/libfmt.a 
