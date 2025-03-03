@@ -7,14 +7,16 @@
 
 #ignore the repository temp dir
 /Repository
+/Repository/*
 
 #ignore 
 UML_Diagrams/*.png
 
-/Repository/*
+
 
 *.clang-format
 
 .vscode/
 
-UML_Diagrams/out 
+UML_Diagrams/out build/
+/build
