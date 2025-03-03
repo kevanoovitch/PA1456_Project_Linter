@@ -16,46 +16,48 @@ add_library(linterLib STATIC
     src/constants.cpp
     Tests/testArgs.cpp
 )
-find_package(GTest REQUIRED)
 
-if(NOT GTest_FOUND)
-    message(FATAL_ERROR "GTest not found!")
-endif()
+# Include directories for headers
+target_include_directories(linterLib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-target_include_directories(linterLib PUBLIC  include)
-target_link_libraries(linterLib PUBLIC GTest::GTest GTest::Main)
+# ----------------------------
+# Library: GTest
+# ----------------------------
 
-# libgit2
-find_package(libgit2 REQUIRED) # finds the package based on standard location(?)/*
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
+)
 
-set(LIBGIT2_INCLUDE_DIRS "/home/kevin/.local/include")
-set(LIBGIT2_LIBRARIES "/home/kevin/.local/lib/libgit2.so")
-
-
-
-target_include_directories(linterLib PUBLIC ${LIBGIT2_INCLUDE_DIRS})
-target_link_libraries(linterLib PUBLIC ${LIBGIT2_LIBRARIES})
-
-#FMT
-#FetchContent_Declare(
-#        fmt
-#        GIT_REPOSITORY  https://github.com/fmtlib/fmt.git
-        #GIT_TAG         9cf9f38eded63e5e0fb95cd536ba51be601d7fa2
-        #GIT_PROGRESS    TRUE
-        #USES_TERMINAL_DOWNLOAD TRUE
-#)
-#FetchContent_MakeAvailable(fmt)
-#target_link_directories(linterLib PUBLIC fmt::fmt)
-
-#FMT bad manual solution
-set(FMT_INCLUDE_DIR "/home/kevin/libs/fmt/include")
-set(FMT_LIBRARY "/home/kevin/libs/fmt/build/libfmt.a") 
-
-target_include_directories(linterLib PUBLIC ${FMT_INCLUDE_DIR})
-target_link_libraries(linterLib PUBLIC ${FMT_LIBRARY})
+FetchContent_MakeAvailable(googletest)
 
 
-#Lohman Json API
+# ----------------------------
+# Library: libgit2
+# ----------------------------
+
+find_package(libgit2 REQUIRED)
+target_link_libraries(linterLib PUBLIC git2)
+
+# ----------------------------
+# Library: FMT
+# ----------------------------
+
+FetchContent_Declare(
+        fmt
+        GIT_REPOSITORY  https://github.com/fmtlib/fmt.git
+        GIT_TAG         9cf9f38eded63e5e0fb95cd536ba51be601d7fa2
+        GIT_PROGRESS    TRUE
+        USES_TERMINAL_DOWNLOAD TRUE
+)
+FetchContent_MakeAvailable(fmt)
+target_link_libraries(linterLib PUBLIC fmt::fmt)
+
+
+# ----------------------------
+# Library: Lohman Json API
+# ----------------------------
 
 FetchContent_Declare(
     json
@@ -78,7 +80,12 @@ if(ENABLE_TESTS)
         Tests/scannerTest.cpp
         Tests/systemTest.cpp
         )
-    target_link_libraries(linterTests linterLib)
+    target_link_libraries(linterTests linterLib GTest::gtest_main)
+
+
+    # Enable CTest to make running tests easier
+    enable_testing()
+    add_test(NAME LinterTests COMMAND linterTests)
 else()
     message(STATUS "Building normal executable")
     add_executable(linter  src/main.cpp)
