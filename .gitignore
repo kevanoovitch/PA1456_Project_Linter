@@ -3,15 +3,15 @@
 
 
 #ignore build files
-Code/build/
+/build
 
 #ignore the repository temp dir
-Code/Repository
+/Repository
 
 #ignore 
 UML_Diagrams/*.png
 
-Code/Repository/*
+/Repository/*
 
 *.clang-format
 
