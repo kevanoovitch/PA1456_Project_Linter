@@ -28,7 +28,9 @@ FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
   GIT_TAG 03597a01ee50ed33e9dfd640b249b4be3799d395
+  GIT_SHALLOW TRUE  # Only fetch latest commit, reduces size
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
+  
 )
 
 FetchContent_MakeAvailable(googletest)
