@@ -65,7 +65,8 @@ target_link_libraries(linterLib PUBLIC fmt::fmt)
 
 FetchContent_Declare(
     json
-    URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
 )
 FetchContent_MakeAvailable(json)
