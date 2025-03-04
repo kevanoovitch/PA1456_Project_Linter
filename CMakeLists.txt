@@ -27,7 +27,7 @@ target_include_directories(linterLib PUBLIC ${CMAKE_SOURCE_DIR}/include)
 FetchContent_Declare(
   googletest
   GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG 03597a01ee50ed33e9dfd640b249b4be3799d395
+  GIT_TAG 6910c9d9165801d8827d628cb72eb7ea9dd538c5
   GIT_SHALLOW TRUE  # Only fetch latest commit, reduces size
   DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
   
