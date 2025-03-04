@@ -33,14 +33,12 @@ const std::string NIL = "No issues detected";
 } // namespace constants
 
 namespace CommonSearchTerms {
-std::vector<std::string> gitIgnoreAlts = {constants::GIT_IGNORE, "GITIGNORE"};
+std::vector<std::string> gitIgnoreAlts = {constants::GIT_IGNORE, "gitignore"};
 
-std::vector<std::string> licenseAlts = {"LICENSE", "LICENSE.txt", "UNLICENSE",
-                                        "UNLICENSE.TXT", "COPYING"};
-std::vector<std::string> readmeAlts = {"readme", "README", "README.md",
-                                       "readme.md"};
+std::vector<std::string> licenseAlts = {"license", "license.txt", "unlicense",
+                                        "unlicense.txt", "copying"};
+std::vector<std::string> readmeAlts = {"readme", "readme.md"};
 
-std::vector<std::string> testAlts = {"test",  "tests", "Test",
-                                     "Tests", "TEST",  "TESTS"};
+std::vector<std::string> testAlts = {"test", "tests"};
 
 } // namespace CommonSearchTerms

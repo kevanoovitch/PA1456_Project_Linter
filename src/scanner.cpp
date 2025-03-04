@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "regex"
 #include <array>
+#include <bits/stdc++.h>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -219,7 +220,10 @@ std::vector<std::string> Searcher::search(std::string wherePath,
     std::string filenamePathRelative =
         dir_entry.path().string(); // Convert to string
 
-    if (regex_search(filenamePathRelative, r)) {
+    // convert to lower
+    std::string tmpLowerPath = this->lower(filenamePathRelative);
+
+    if (regex_search(tmpLowerPath, r)) {
 
       std::string filenamePathAbsolute =
           std::filesystem::absolute(dir_entry).string();
@@ -243,6 +247,16 @@ std::vector<std::string> Searcher::contains(std::string wherePath,
   std::string pattern = (searchFor);
 
   return this->search(wherePath, pattern);
+}
+
+std::string Searcher::lower(std::string str) {
+  // Source:
+  // https://www.geeksforgeeks.org/how-to-convert-std-string-to-lower-case-in-cpp/
+
+  // Converting the std::string to lower case
+  // using std::transform()
+  transform(str.begin(), str.end(), str.begin(), ::tolower);
+  return str;
 }
 
 /**********************************************************

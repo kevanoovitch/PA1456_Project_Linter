@@ -227,8 +227,11 @@ void readmeEntry::indicatorDeterminator() {
   // check if several --> yellow
   this->noMoreThanOne(README);
 
-  // check contents --> yellow/red
-  this->checkContents();
+  if (this->Indication != YELLOW) {
+    /* If not several were found */
+    // check contents --> yellow/red
+    this->checkContents();
+  }
 
   // Implicit indication
   if (Indication == GREEN) {
@@ -300,8 +303,11 @@ void gitignoreEntry::indicatorDeterminator() {
   // check if several --> yellow
   this->noMoreThanOne(GIT_IGNORE);
 
-  // check contents --> yellow/red
-  this->checkContents();
+  // check if several --> yellow
+  if (this->Indication != YELLOW) {
+    /* If not several were found */
+    this->checkContents();
+  }
 
   // Implicit indication
   if (Indication == GREEN) {

@@ -75,6 +75,7 @@ public:
 private:
   Scanner *myScanner;
   std::vector<std::string> search(std::string wherePath, std::string pattern);
+  std::string lower(std::string str);
 };
 
 /**********************************************************
