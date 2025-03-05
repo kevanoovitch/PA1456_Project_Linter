@@ -10,8 +10,6 @@
 using namespace constants;
 using namespace CommonSearchTerms;
 
-// Will call all the functions needed
-
 int main() {
   git_libgit2_init();
 
@@ -33,10 +31,6 @@ int main() {
   if (!ptr) {
     std::cerr << "❌ Error: Strategy pointer is null. Aborting.\n";
     return 1; // Exit or handle error
-  }
-
-  if (userInputHandler.getIsUrl() == true) {
-    filesys.checkAndClear(REPOSITORY_PATH);
   }
 
   userInputHandler.executeStrategy();

@@ -1,5 +1,6 @@
 #include "inputHandler.h"
 #include "constants.h"
+#include "fileManager.h"
 #include <git2.h>
 #include <regex>
 
@@ -126,6 +127,10 @@ std::string typeURL::getInput() { return parentInputHandler->getInput(); }
 
 void typeURL::proccessInput() {
   std::string url = getInput();
+
+  fileManager filesys;
+
+  filesys.checkAndClear(REPOSITORY_PATH);
 
   if (int err = git_clone(&parentInputHandler->sharedResult->repo, url.c_str(),
                           localPath.c_str(), NULL) != 0) {

@@ -262,7 +262,7 @@ void licenseEntry::indicatorDeterminator() {
 
   // Implicit indication
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
@@ -282,7 +282,7 @@ void workflowEntry::indicatorDeterminator() {
 
   // Implicit indication
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
@@ -311,7 +311,7 @@ void gitignoreEntry::indicatorDeterminator() {
 
   // Implicit indication
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
@@ -337,7 +337,7 @@ void leaksEntry::indicatorDeterminator() {
   }
 
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
