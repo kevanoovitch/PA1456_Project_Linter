@@ -3,6 +3,7 @@
 #include "regex"
 #include <array>
 #include <bits/stdc++.h>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -177,6 +178,8 @@ void Scanner::runGitLeaks() {
   parseGitleaksOutput(PATH_REPORT_CREDENTIALS);
 }
 
+std::string Scanner::getRepoPath() { return this->repoPath; }
+
 /**********************************************************
  *                          Searcher                      *
  **********************************************************/
@@ -208,6 +211,17 @@ std::vector<std::string> Searcher::searchFor(std::string path,
   return pathsToFoundFiles;
 };
 
+std::string Searcher::makeRelToGitRoot(std::string absPath) {
+
+  std::filesystem::path repoRoot =
+      std::filesystem::canonical(this->myScanner->getRepoPath());
+  std::filesystem::path absWherePath = std::filesystem::canonical(absPath);
+  std::filesystem::path relWherePath =
+      std::filesystem::relative(absWherePath, repoRoot);
+
+  return relWherePath;
+}
+
 std::vector<std::string> Searcher::search(std::string wherePath,
                                           std::string pattern) {
 
@@ -217,11 +231,13 @@ std::vector<std::string> Searcher::search(std::string wherePath,
 
   for (auto const &dir_entry :
        std::filesystem::recursive_directory_iterator(wherePath)) {
-    std::string filenamePathRelative =
+    std::string absfilenamePath =
         dir_entry.path().string(); // Convert to string
 
+    // make path relative
+    std::string tmpRelPath = this->makeRelToGitRoot(absfilenamePath);
     // convert to lower
-    std::string tmpLowerPath = this->lower(filenamePathRelative);
+    std::string tmpLowerPath = this->lower(tmpRelPath);
 
     if (regex_search(tmpLowerPath, r)) {
 
@@ -244,6 +260,7 @@ std::vector<std::string> Searcher::endsWithFile(std::string wherePath,
 
 std::vector<std::string> Searcher::contains(std::string wherePath,
                                             std::string searchFor) {
+
   std::string pattern = (searchFor);
 
   return this->search(wherePath, pattern);
@@ -253,8 +270,6 @@ std::string Searcher::lower(std::string str) {
   // Source:
   // https://www.geeksforgeeks.org/how-to-convert-std-string-to-lower-case-in-cpp/
 
-  // Converting the std::string to lower case
-  // using std::transform()
   transform(str.begin(), str.end(), str.begin(), ::tolower);
   return str;
 }

@@ -37,12 +37,13 @@ public:
 
   void setRepoPath(std::string path);
   void setFoundMap(bool isFound, const std::string name);
+  std::string getRepoPath();
 
   std::shared_ptr<scanResults> sharedResult;
 
 private:
   Searcher *mySearcher;
-  std::string repoPath;
+  std::string repoPath; // at construction is root
   fileManager *fileManagerPtr;
   GitScanner *myGitScanner;
 
@@ -76,6 +77,7 @@ private:
   Scanner *myScanner;
   std::vector<std::string> search(std::string wherePath, std::string pattern);
   std::string lower(std::string str);
+  std::string makeRelToGitRoot(std::string absPath);
 };
 
 /**********************************************************
