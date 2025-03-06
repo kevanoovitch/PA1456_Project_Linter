@@ -1,3 +1,4 @@
+#include "configHandler.h"
 #include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"
@@ -17,8 +18,13 @@ protected:
   fileManager filesys;
   Scanner *theScanner = nullptr;
   resultInterpreter *theResult = nullptr;
+  configHandler config;
 
   void SetUp() override {
+
+    // Read the configFile
+    config.readConfigFile();
+
     // Reset file system before each test
     filesys.clearDir(REPOSITORY_PATH);
 

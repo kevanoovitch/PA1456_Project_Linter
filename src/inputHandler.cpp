@@ -156,6 +156,10 @@ void typeFolder::proccessInput() {
 
   std::string path = getInput();
 
+  // ensure target folder exists
+  fileManager filesys;
+  filesys.ensureFolderExists(REPOSITORY_PATH);
+
   // set the repo
   int error = git_repository_init(&parentInputHandler->sharedResult->repo,
                                   path.c_str(), false);

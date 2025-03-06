@@ -1,3 +1,4 @@
+#include "configHandler.h"
 #include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"

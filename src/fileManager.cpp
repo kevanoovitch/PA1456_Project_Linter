@@ -18,11 +18,15 @@ bool fileManager::isEmpty(std::string path) {
   return false;
 }
 
+void fileManager::mkdir(std::string path) {
+  std::filesystem::create_directory(path);
+}
+
 void fileManager::checkAndClear(std::string path) {
 
   if (!this->dirExists(path)) {
 
-    std::filesystem::create_directory(path);
+    this->mkdir(path);
     return;
   }
 

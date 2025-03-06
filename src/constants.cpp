@@ -4,8 +4,8 @@ namespace constants {
 const std::string GIT_IGNORE = ".gitignore";
 const std::string WORKFLOW_STRING = "Workflow";
 const std::string LICENSE = "License";
-const std::string REPOSITORY_PATH = "../Repository";
-const std::string WORKFLOW_PATH = "../Repository/.github/workflows";
+std::string REPOSITORY_PATH = "../Repository";
+std::string WORKFLOW_PATH = "/.github/workflows";
 const std::string README = "readMe";
 const std::string TEST_STRING = "tests";
 
@@ -29,6 +29,8 @@ const std::string linkWorkflow =
     "https://docs.github.com/en/actions/writing-workflows";
 
 const std::string NIL = "No issues detected";
+
+const std::string PATH_CONFIG = "../config.json";
 
 } // namespace constants
 

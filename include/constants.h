@@ -6,8 +6,8 @@ namespace constants {
 extern const std::string GIT_IGNORE;
 extern const std::string WORKFLOW_STRING;
 extern const std::string LICENSE;
-extern const std::string REPOSITORY_PATH;
-extern const std::string WORKFLOW_PATH;
+extern std::string REPOSITORY_PATH;
+extern std::string WORKFLOW_PATH;
 extern const std::string README;
 extern const std::string TEST_STRING;
 
@@ -25,6 +25,7 @@ extern const std::string linkWorkflow;
 extern const std::string NIL;
 
 extern const std::string PATH_REPORT_CREDENTIALS;
+extern const std::string PATH_CONFIG;
 
 } // namespace constants
 

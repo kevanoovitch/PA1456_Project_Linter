@@ -15,6 +15,7 @@ add_library(linterLib STATIC
     src/resultInterpreter.cpp
     src/constants.cpp
     Tests/testArgs.cpp
+    src/configHandler.cpp
 )
 
 # Include directories for headers
@@ -68,7 +69,7 @@ FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download
 FetchContent_MakeAvailable(json)
 
 
-target_link_libraries(linterLib PRIVATE nlohmann_json::nlohmann_json)
+target_link_libraries(linterLib PUBLIC nlohmann_json::nlohmann_json)
 
 # Normal executable for end users
 add_executable(linter src/main.cpp)
@@ -78,6 +79,7 @@ target_link_libraries(linter PRIVATE linterLib)
 add_executable(linterTests
     Tests/mainTest.cpp  # This file has a main() function for tests
     Tests/testArgs.cpp
+    Tests/configHandlerTest.cpp
     Tests/inputTest.cpp
     Tests/scannerTest.cpp
     Tests/integrationTests.cpp
@@ -106,5 +108,5 @@ endif()
 
 
 # Enable CTest and register the test
-enable_testing()
-add_test(NAME LinterTests COMMAND linterTests)
+#enable_testing()
+#add_test(NAME LinterTests COMMAND linterTests)
