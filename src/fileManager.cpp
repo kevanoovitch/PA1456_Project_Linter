@@ -18,7 +18,7 @@ bool fileManager::isEmpty(std::string path) {
   return false;
 }
 
-void fileManager::checkAndClear(std::string path, std::istream &in) {
+void fileManager::checkAndClear(std::string path) {
 
   if (!this->dirExists(path)) {
 

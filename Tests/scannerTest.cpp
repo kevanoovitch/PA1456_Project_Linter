@@ -150,11 +150,6 @@ TEST(ScannerGitOperations, findGitAtributes) {
   EXPECT_GT(commitResult, 0)
       << "Expected commit count to be bigger than 1 but it wasn't";
 
-  std::cerr << "\n";
-  std::cerr << "GITLIB ERROR from GitScanner::countCommits: "
-            << git_error_last()->message << std::endl;
-  std::cerr << "\n";
-
   // List contributors -friend function
 
   std::set<std::string> contributorsSet =
@@ -164,11 +159,6 @@ TEST(ScannerGitOperations, findGitAtributes) {
 
   EXPECT_GT(nrOfContributors, 0)
       << "Expected commit count to be bigger than 1 but it wasn't";
-
-  std::cerr << "\n";
-  std::cerr << "GITLIB ERROR from GitScanner::countContributors: "
-            << git_error_last()->message << std::endl;
-  std::cerr << "\n";
 
   // List and count git attributes and write to result - proper method
   myScanner.scanGitAttributes();

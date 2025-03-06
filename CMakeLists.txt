@@ -54,6 +54,7 @@ FetchContent_Declare(
         GIT_TAG         9cf9f38eded63e5e0fb95cd536ba51be601d7fa2
         GIT_PROGRESS    TRUE
         USES_TERMINAL_DOWNLOAD TRUE
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE  # Fixes the warning
 )
 FetchContent_MakeAvailable(fmt)
 target_link_libraries(linterLib PUBLIC fmt::fmt)
@@ -69,26 +70,20 @@ FetchContent_MakeAvailable(json)
 
 target_link_libraries(linterLib PRIVATE nlohmann_json::nlohmann_json)
 
-# Define a manual toggle for testing mode
-option(TESTS "Enable test build" OFF)  # Default OFF, change in CMake cache or presets
+# Normal executable for end users
+add_executable(linter src/main.cpp)
+target_link_libraries(linter PRIVATE linterLib)
 
-if(TESTS)
-    message(STATUS "Building test executable")
-    add_executable(linterTests 
-        Tests/testArgs.cpp 
-        Tests/mainTest.cpp 
-        Tests/inputTest.cpp 
-        Tests/scannerTest.cpp
-        Tests/systemTest.cpp
-        )
-    target_link_libraries(linterTests linterLib GTest::gtest_main)
+# Test executable (Always Built, but Not Run Automatically)
+add_executable(linterTests
+    Tests/mainTest.cpp  # This file has a main() function for tests
+    Tests/testArgs.cpp
+    Tests/inputTest.cpp
+    Tests/scannerTest.cpp
+    Tests/systemTest.cpp
+)
+target_link_libraries(linterTests linterLib GTest::gtest_main)
 
-
-    # Enable CTest to make running tests easier
-    enable_testing()
-    add_test(NAME LinterTests COMMAND linterTests)
-else()
-    message(STATUS "Building normal executable")
-    add_executable(linter  src/main.cpp)
-    target_link_libraries(linter linterLib)
-endif()
+# Enable CTest and register the test
+enable_testing()
+add_test(NAME LinterTests COMMAND linterTests)

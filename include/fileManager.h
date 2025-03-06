@@ -7,7 +7,7 @@
 class fileManager {
 
 public:
-  void checkAndClear(std::string path, std::istream &in = std::cin);
+  void checkAndClear(std::string path);
   void clearDir(std::string path);
   bool isEmpty(std::string path);
   bool dirExists(std::string path);
