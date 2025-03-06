@@ -57,24 +57,33 @@ protected:
   }
 };
 
-TEST_P(LinterTest, LinterShouldProduceOutput) {
-  std::string useCase = GetParam(); // Retrieves the assigned value
-  std::cout << "Testing use case: " << useCase << std::endl;
+class LinterTestPasses : public LinterTest {}; // Test fixture for passing cases
+class LinterTestFails : public LinterTest {};  // Test fixture for failing cases
 
-  // Capture stdout
-  std::ostringstream buffer;
-  std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
+INSTANTIATE_TEST_SUITE_P(PassesAllTest, LinterTestPasses,
+                         ::testing::Values(FOLDER_DUMMY_ALL));
 
-  theResult->printDetails();
+INSTANTIATE_TEST_SUITE_P(FailsAllTest, LinterTestFails,
+                         ::testing::Values(FOLDER_DUMMY_NONE));
 
-  std::cout.rdbuf(old);
+TEST_P(LinterTestPasses, PassesAll) {
+  std::string useCase = GetParam();
+  std::cout << "[PassesAll] Testing use case: " << useCase << std::endl;
 
-  std::string output = buffer.str();
-
-  ASSERT_FALSE(output.empty()) << "❌ No output was printed!";
+  for (auto &it : theResult->AllResultEntries) {
+    EXPECT_EQ(it->Indication, GREEN)
+        << "❌ [PassesAll] Failed for entry: " << it->entryName << "\n"
+        << "Reason: " << it->IndicationReason;
+  }
 }
 
-INSTANTIATE_TEST_SUITE_P(StrategyTests, LinterTest,
-                         ::testing::Values(URL_REPO_WITH_ALL, URL_REPO_MINIMAL,
-                                           FOLDER_ABSOLUTE_REPO_TIMER_APP,
-                                           FOLDER_ABSOLUTE_WITH_ALL));
+TEST_P(LinterTestFails, FailsAllTest) {
+  std::string useCase = GetParam();
+  std::cout << "[FailsAll] Testing use case: " << useCase << std::endl;
+
+  for (auto &it : theResult->AllResultEntries) {
+    EXPECT_EQ(it->Indication, RED)
+        << "❌ [FailsAll] Failed for entry: " << it->entryName << "\n"
+        << "Reason: " << it->IndicationReason;
+  }
+}

@@ -161,5 +161,6 @@ void typeFolder::proccessInput() {
                                   path.c_str(), false);
 
   // Need to change the scan dir
+
   parentInputHandler->localPath = path;
 }

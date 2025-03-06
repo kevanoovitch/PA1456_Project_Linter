@@ -80,9 +80,30 @@ add_executable(linterTests
     Tests/testArgs.cpp
     Tests/inputTest.cpp
     Tests/scannerTest.cpp
-    Tests/systemTest.cpp
+    Tests/integrationTests.cpp
 )
 target_link_libraries(linterTests linterLib GTest::gtest_main)
+
+#unzip the dummy repos
+
+set(DUMMY_REPOS_DIR "${CMAKE_BINARY_DIR}/dummyRepos") # This is the extracted directory
+set(DUMMY_ARCHIVE "${CMAKE_SOURCE_DIR}/Tests/dummyRepos.zip") # Path to your zip file
+
+# Check if the extracted directory already exists
+if(NOT EXISTS ${DUMMY_REPOS_DIR})
+    message(STATUS "Extracting dummy repositories from ${DUMMY_ARCHIVE}...")
+
+    # Ensure unzip is available
+    find_program(UNZIP_EXE unzip)
+    if(NOT UNZIP_EXE)
+        message(FATAL_ERROR "Error: unzip command not found! Please install unzip.")
+    endif()
+
+    # Extract the dummy.zip into ${CMAKE_BINARY_DIR}
+    execute_process(COMMAND ${UNZIP_EXE} -o ${DUMMY_ARCHIVE} -d ${CMAKE_SOURCE_DIR}/Tests
+                    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Tests)
+endif()
+
 
 # Enable CTest and register the test
 enable_testing()
