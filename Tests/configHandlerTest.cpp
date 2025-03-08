@@ -1,7 +1,7 @@
 #include "configHandler.h"
 #include "constants.h"
+#include "fstream"
 #include "scanner.h"
-
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
@@ -28,4 +28,21 @@ TEST(ConfigTest, NewRepoFolder) {
 
   EXPECT_EQ(existsResult, true)
       << "The folder according to the config should've been created";
+
+  std::ifstream file(PATH_CONFIG);
+  if (!file) {
+    std::cerr << "Failed to open config in tests JSON output." << std::endl;
+    return;
+  }
+
+  nlohmann::json configFile;
+  file >> configFile;
+
+  if (configFile["custom"][README]["required"].is_null()) {
+    EXPECT_EQ(config::fileReqs[README].properties["required"],
+              configFile["defaults"][README]["required"].get<bool>());
+  } else {
+    EXPECT_EQ(config::fileReqs[README].properties["required"],
+              configFile["custom"][README]["required"].get<bool>());
+  }
 }

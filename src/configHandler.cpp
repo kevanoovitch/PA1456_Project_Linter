@@ -7,6 +7,7 @@ using namespace constants;
 
 std::string config::relRepoPath = "";
 std::string config::relWorkflowPath = "";
+std::unordered_map<std::string, fileParams> config::fileReqs;
 
 configHandler::configHandler(/* args */) {}
 
@@ -34,6 +35,18 @@ void configHandler::readConfig(std::string key, std::string &targetValue) {
     targetValue = this->jFile["defaults"][key];
   } else {
     targetValue = tmp;
+  }
+}
+
+void configHandler::readFileReq(std::string file, std::string key,
+                                bool &targetValue) {
+  // Target value is a refrence to the config struct
+
+  if (this->jFile["custom"][file][key].is_null()) {
+    targetValue = this->jFile["defaults"][file][key].get<bool>();
+  } else {
+    targetValue = this->jFile["custom"][file][key].get<bool>();
+    ;
   }
 }
 
@@ -66,4 +79,17 @@ void fileManager::ensureFolderExists(std::string path) {
   }
 }
 
-void configHandler::readIndicationParams() { return; }
+void configHandler::readIndicationParams() {
+
+  std::vector<std::string> files = {README, LICENSE, GIT_IGNORE, TEST_STRING,
+                                    WORKFLOW_STRING};
+
+  std::vector<std::string> keys = {"several", "required", "hasContents"};
+
+  for (auto file : files) {
+
+    for (auto key : keys) {
+      this->readFileReq(file, key, config::fileReqs[file].properties[key]);
+    }
+  }
+}

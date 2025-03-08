@@ -4,15 +4,67 @@
     "defaults": {
         "repoPath": "../Repository",
 
+        ".gitignore": {
+            "required" : true,
+            "several" : true,
+            "hasContents" : true
+        },
+
+        "Workflow": {
+            "required" : true,
+            "several" : false,
+            "hasContents" : true
+        },
+
+        "License": {
+            "required" : true,
+            "several" : true,
+            "hasContents" : true
+        },
+
         "readMe": {
-            "several" : "true",
-            "required" : "true",
-            "hasContents" : "true"
+            "required" : true,
+            "several" : true,
+            "hasContents" : true
+        },
+
+        "tests": {
+            "required" : true,
+            "several" : false,
+            "hasContents" : true
         }
     },
     "custom": {
-        "repoPath": ""
+        "repoPath": "",
 
-        
+        ".gitignore": {
+            "required" : null,
+            "several" : null,
+            "hasContents" : null
+        },
+
+        "Workflow": {
+            "required" : null,
+            "several" : null,
+            "hasContents" : null
+        },
+
+        "License": {
+            "required" : null,
+            "several" : null,
+            "hasContents" : null
+        },
+
+        "readMe": {
+            "required" : null,
+            "several" : null,
+            "hasContents" : null
+        },
+
+        "tests": {
+            "required" : null,
+            "several" : null,
+            "hasContents" : null
+        }
     }
 }
