@@ -1,3 +1,18 @@
+
+
 {
-    "repoPath": "../apa"
+    "defaults": {
+        "repoPath": "../Repository",
+
+        "readMe": {
+            "several" : "true",
+            "required" : "true",
+            "hasContents" : "true"
+        }
+    },
+    "custom": {
+        "repoPath": ""
+
+        
+    }
 }

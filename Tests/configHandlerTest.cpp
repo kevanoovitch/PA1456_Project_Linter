@@ -1,7 +1,7 @@
 #include "configHandler.h"
 #include "constants.h"
 #include "scanner.h"
-#include <fstream>
+
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
@@ -13,19 +13,16 @@ TEST(ConfigTest, NewRepoFolder) {
 
   configHandler config;
 
-  std::ifstream file(PATH_CONFIG);
-  nlohmann::json configFile;
-  file >> configFile;
   std::string newPath;
 
-  if (!configFile.empty()) {
+  config.configure();
 
-    newPath = configFile["repoPath"];
-  }
-
-  config.readConfigFile();
+  newPath = REPOSITORY_PATH;
 
   fileManager filesys;
+
+  EXPECT_EQ(config::relRepoPath, REPOSITORY_PATH)
+      << "The repo path should be set to the default path";
 
   bool existsResult = filesys.dirExists(newPath);
 

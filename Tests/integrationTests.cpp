@@ -23,7 +23,7 @@ protected:
   void SetUp() override {
 
     // Read the configFile
-    config.readConfigFile();
+    config.configure();
 
     // Reset file system before each test
     filesys.clearDir(REPOSITORY_PATH);

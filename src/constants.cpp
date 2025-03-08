@@ -1,11 +1,12 @@
 #include "constants.h"
+#include "configHandler.h"
 
 namespace constants {
 const std::string GIT_IGNORE = ".gitignore";
 const std::string WORKFLOW_STRING = "Workflow";
 const std::string LICENSE = "License";
-std::string REPOSITORY_PATH = "../Repository";
-std::string WORKFLOW_PATH = "/.github/workflows";
+std::string REPOSITORY_PATH;
+std::string WORKFLOW_PATH;
 const std::string README = "readMe";
 const std::string TEST_STRING = "tests";
 
