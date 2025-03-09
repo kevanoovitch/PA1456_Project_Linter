@@ -6,32 +6,32 @@
 
         ".gitignore": {
             "required" : true,
-            "several" : true,
-            "hasContents" : true
+            "allowMultiple" : false,
+            "requiresContent" : true
         },
 
         "Workflow": {
             "required" : true,
-            "several" : false,
-            "hasContents" : true
+            "allowMultiple" : true,
+            "requiresContent" : true
         },
 
         "License": {
             "required" : true,
-            "several" : true,
-            "hasContents" : true
+            "allowMultiple" : false,
+            "requiresContent" : true
         },
 
         "readMe": {
             "required" : true,
-            "several" : true,
-            "hasContents" : true
+            "allowMultiple" : false,
+            "requiresContent" : true
         },
 
         "tests": {
             "required" : true,
-            "several" : false,
-            "hasContents" : true
+            "allowMultiple" : true,
+            "requiresContent" : true
         }
     },
     "custom": {
@@ -39,32 +39,32 @@
 
         ".gitignore": {
             "required" : null,
-            "several" : null,
-            "hasContents" : null
+            "allowMultiple" : null,
+            "requiresContent" : null
         },
 
         "Workflow": {
             "required" : null,
-            "several" : null,
-            "hasContents" : null
+            "allowMultiple" : null,
+            "requiresContent" : null
         },
 
         "License": {
             "required" : null,
-            "several" : null,
-            "hasContents" : null
+            "allowMultiple" : null,
+            "requiresContent" : null
         },
 
         "readMe": {
             "required" : null,
-            "several" : null,
-            "hasContents" : null
+            "allowMultiple" : null,
+            "requiresContent" : null
         },
 
         "tests": {
             "required" : null,
-            "several" : null,
-            "hasContents" : null
+            "allowMultiple" : null,
+            "requiresContent" : null
         }
     }
 }

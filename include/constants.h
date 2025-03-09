@@ -23,6 +23,7 @@ extern const std::string linkTests;
 extern const std::string linkWorkflow;
 
 extern const std::string NIL;
+extern const std::string NO_CHECKS;
 
 extern const std::string PATH_REPORT_CREDENTIALS;
 extern const std::string PATH_CONFIG;

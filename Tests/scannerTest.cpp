@@ -17,7 +17,7 @@ TEST(ScannerOperations, findRequiredFiles) {
   fileManager filesys;
 
   filesys.clearDir(REPOSITORY_PATH);
-  handler.pickStrategy(URL_REPO_WITH_ALL);
+  handler.pickStrategy(FOLDER_DUMMY_ALL);
   handler.executeStrategy();
 
   // Execute Tests
@@ -73,7 +73,7 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
 
   filesys.clearDir(REPOSITORY_PATH);
 
-  handler.pickStrategy(URL_REPO_SMALL_SIZE);
+  handler.pickStrategy(FOLDER_DUMMY_NONE);
   handler.executeStrategy();
 
   // Execute Tests

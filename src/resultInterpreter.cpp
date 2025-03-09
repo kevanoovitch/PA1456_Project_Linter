@@ -145,6 +145,22 @@ void resultEntry::noMoreThanOne(std::string name) {
   }
 }
 
+void resultEntry::applyFileConfigRules() {
+
+  auto &fileReqs = config::fileReqs[this->entryName].properties;
+
+  this->allowMultiple = fileReqs["allowMultiple"];
+  this->requireContent = fileReqs["requireContent"];
+  this->required = fileReqs["required"];
+
+  std::cout << "allow multiple in " << this->entryName << " " << std::boolalpha
+            << this->allowMultiple << std::endl;
+  std::cout << "require content in " << this->entryName << " " << std::boolalpha
+            << this->requireContent << std::endl;
+  std::cout << "required in " << this->entryName << " " << std::boolalpha
+            << this->required << std::endl;
+}
+
 void resultEntry::parentPrintEntry() {
 
   std::vector<std::string> paths = this->paths;
@@ -209,6 +225,20 @@ bool resultEntry::crossRefrenceIgnore(std::string path) {
   return false;
 }
 
+void resultEntry::implicitIndication() {
+
+  if (Indication == GREEN) {
+    this->IndicationReason = NIL;
+    this->Indication = GREEN;
+    return;
+  }
+
+  if (Indication == WHITE) {
+
+    this->IndicationReason = NO_CHECKS;
+  }
+}
+
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
@@ -222,19 +252,20 @@ void readmeEntry::indicatorDeterminator() {
   // Prepare the link to read more
   readMore = linkReadme;
 
+  applyFileConfigRules();
+
   // check if not found --> red
 
-  if (config::fileReqs[README].properties["required"] == true) {
+  if (this->required == true) {
     this->VerifyIfFound(README);
   }
 
-  if (config::fileReqs[README].properties["several"] == true) {
+  if (this->allowMultiple == false) {
     // check if several --> yellow
     this->noMoreThanOne(README);
   }
 
-  if (config::fileReqs[README].properties["hasContents"] == true ||
-      config::fileReqs[README].properties["required"] == true) {
+  if (this->requireContent == true || this->required == true) {
     if (this->Indication != YELLOW) {
       /* If not several were found */
       // check contents --> yellow/red
@@ -242,10 +273,8 @@ void readmeEntry::indicatorDeterminator() {
     }
   }
 
-  // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = NIL;
-  }
+  // Implicit indication if white no checks if green all passed
+  implicitIndication();
 }
 
 void readmeEntry::printEntry() { parentPrintEntry(); }

@@ -170,6 +170,6 @@ void typeFolder::proccessInput() {
   // Need to change the scan dir
 
   parentInputHandler->localPath = path;
-  REPOSITORY_PATH = path;
+
   WORKFLOW_PATH = path + "/.github/workflows";
 }

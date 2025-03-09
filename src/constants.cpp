@@ -30,6 +30,7 @@ const std::string linkWorkflow =
     "https://docs.github.com/en/actions/writing-workflows";
 
 const std::string NIL = "No issues detected";
+const std::string NO_CHECKS = "No checks were performed";
 
 const std::string PATH_CONFIG = "../config.json";
 

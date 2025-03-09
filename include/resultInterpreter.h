@@ -47,6 +47,10 @@ public:
   std::string IndicationReason;
   std::string readMore;
 
+  bool allowMultiple;
+  bool requireContent;
+  bool required;
+
 protected:
   std::shared_ptr<scanResults> sharedResult;
   // Shared algorithms
@@ -56,6 +60,9 @@ protected:
   void checkContents();
   void parentPrintEntry();
   bool crossRefrenceIgnore(std::string path);
+  void implicitIndication();
+
+  void applyFileConfigRules();
 };
 
 /**********************************************************

@@ -84,7 +84,8 @@ void configHandler::readIndicationParams() {
   std::vector<std::string> files = {README, LICENSE, GIT_IGNORE, TEST_STRING,
                                     WORKFLOW_STRING};
 
-  std::vector<std::string> keys = {"several", "required", "hasContents"};
+  std::vector<std::string> keys = {"required", "allowMultiple",
+                                   "requiresContent"};
 
   for (auto file : files) {
 

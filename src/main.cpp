@@ -18,6 +18,9 @@ int main() {
   inputHandler userInputHandler;
   fileManager filesys;
 
+  configHandler config;
+  config.configure();
+
   std::cout << "Welcome to the Linter prototype" << std::endl;
   std::cout << "Please input an URL or a absolute Path to a GitHub repositoy "
                "you want to analyze"

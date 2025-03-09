@@ -38,9 +38,7 @@ void Scanner::scanForWorkflow() {
   if (fileManagerPtr->dirExists(WORKFLOW_PATH) == false) {
 
     sharedResult->foundMap[WORKFLOW_STRING] = false;
-    std::cerr << "Error in Scanner::scanForWorkflow() Workflow dir not found "
-                 "couldn't find: "
-              << WORKFLOW_PATH << std::endl;
+
     return;
   } else {
 
