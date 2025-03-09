@@ -1,4 +1,5 @@
 #include "resultInterpreter.h"
+#include "configHandler.h"
 #include "constants.h"
 #include "git2.h"
 #include <fmt/core.h>
@@ -222,15 +223,23 @@ void readmeEntry::indicatorDeterminator() {
   readMore = linkReadme;
 
   // check if not found --> red
-  this->VerifyIfFound(README);
 
-  // check if several --> yellow
-  this->noMoreThanOne(README);
+  if (config::fileReqs[README].properties["required"] == true) {
+    this->VerifyIfFound(README);
+  }
 
-  if (this->Indication != YELLOW) {
-    /* If not several were found */
-    // check contents --> yellow/red
-    this->checkContents();
+  if (config::fileReqs[README].properties["several"] == true) {
+    // check if several --> yellow
+    this->noMoreThanOne(README);
+  }
+
+  if (config::fileReqs[README].properties["hasContents"] == true ||
+      config::fileReqs[README].properties["required"] == true) {
+    if (this->Indication != YELLOW) {
+      /* If not several were found */
+      // check contents --> yellow/red
+      this->checkContents();
+    }
   }
 
   // Implicit indication

@@ -35,11 +35,13 @@ void Scanner::scanForWorkflow() {
 
   // Workflow scan has to first make sure the requried Dir exists
 
-  if (fileManagerPtr->dirExists(this->repoPath + "/.github/workflows") ==
-      false) {
+  if (fileManagerPtr->dirExists(WORKFLOW_PATH) == false) {
 
     sharedResult->foundMap[WORKFLOW_STRING] = false;
-
+    std::cerr << "Error in Scanner::scanForWorkflow() Workflow dir not found "
+                 "couldn't find: "
+              << WORKFLOW_PATH << std::endl;
+    return;
   } else {
 
     std::vector<std::string> workflowFileExtensions = {".yml", ".yaml"};

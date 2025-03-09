@@ -158,7 +158,10 @@ void typeFolder::proccessInput() {
 
   // ensure target folder exists
   fileManager filesys;
-  filesys.ensureFolderExists(REPOSITORY_PATH);
+  if (!filesys.dirExists(path)) {
+    std::cerr << "Error: Folder does not exist\n";
+    return;
+  }
 
   // set the repo
   int error = git_repository_init(&parentInputHandler->sharedResult->repo,
@@ -167,4 +170,6 @@ void typeFolder::proccessInput() {
   // Need to change the scan dir
 
   parentInputHandler->localPath = path;
+  REPOSITORY_PATH = path;
+  WORKFLOW_PATH = path + "/.github/workflows";
 }
