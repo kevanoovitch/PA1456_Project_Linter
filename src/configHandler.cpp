@@ -6,9 +6,15 @@
 
 using namespace constants;
 
+// Static members: Config
 std::string config::relRepoPath = "";
 std::string config::relWorkflowPath = "";
 std::unordered_map<std::string, fileParams> config::fileReqs;
+bool config::minimalOutputMode = false;
+
+// Static members: Errorstatus
+int errorStatus::statusInt = 0;
+std::string errorStatus::statusMessage = NIL;
 
 configHandler::configHandler(/* args */) {}
 
@@ -17,7 +23,8 @@ configHandler::~configHandler() {}
 void configHandler::openAndSetConfigFile(std::string path) {
   std::ifstream file(path);
   if (!file) {
-    std::cerr << "Failed to open config JSON output." << std::endl;
+    std::cerr << "Failed to open config JSON file: " + path << std::endl;
+    errorStatus::statusInt = 2;
     return;
   }
 
@@ -26,16 +33,14 @@ void configHandler::openAndSetConfigFile(std::string path) {
 
   this->jFile = configFile;
 }
-
-void configHandler::readConfig(std::string key, std::string &targetValue) {
+template <typename T>
+void configHandler::readConfig(std::string key, T &targetValue) {
   // Target value is a refrence to the config struct
 
-  std::string tmp = this->jFile["custom"][key];
-
-  if (tmp.empty() == true) {
-    targetValue = this->jFile["defaults"][key];
+  if (jFile["custom"].contains(key) && !jFile["custom"][key].is_null()) {
+    targetValue = jFile["custom"][key].get<T>();
   } else {
-    targetValue = tmp;
+    targetValue = jFile["defaults"][key].get<T>();
   }
 }
 
@@ -51,12 +56,18 @@ void configHandler::readFileReq(std::string file, std::string key,
   }
 }
 
+void configHandler::readOutputMode() {
+
+  readConfig("minimalOutput", config::minimalOutputMode);
+}
+
 void configHandler::configure(std::string path) {
 
   openAndSetConfigFile(path);
 
   this->readDstPath();
   this->readIndicationParams();
+  this->readOutputMode();
 }
 
 void configHandler::readDstPath() {
@@ -69,6 +80,7 @@ void configHandler::readDstPath() {
   constants::WORKFLOW_PATH = config::relWorkflowPath;
 
   fileManager filesys;
+
   filesys.ensureFolderExists(config::relRepoPath);
 }
 

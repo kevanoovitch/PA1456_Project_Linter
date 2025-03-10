@@ -19,6 +19,7 @@ public:
   bool isFound(std::string entry);
 
   void printDetails();
+  void printMinimal();
   void interpretResults();
   void interpretLeaks();
   std::vector<std::unique_ptr<resultEntry>> AllResultEntries;
@@ -61,6 +62,7 @@ protected:
   void parentPrintEntry();
   bool crossRefrenceIgnore(std::string path);
   void implicitIndication();
+  void updateError();
 
   void applyFileConfigRules();
 };
