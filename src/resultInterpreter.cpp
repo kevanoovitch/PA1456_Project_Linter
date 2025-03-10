@@ -3,6 +3,7 @@
 #include "constants.h"
 #include "errorStatus.h"
 #include "git2.h"
+#include <bits/stdc++.h>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -109,14 +110,39 @@ void resultInterpreter::printDetails() {
   printGitAttributes();
 }
 
-void resultInterpreter::printGitAttributes() {
+bool resultInterpreter::compareContributors(
+    const std::pair<std::string, int> &a,
+    const std::pair<std::string, int> &b) {
+  return a.second > b.second; // Sort in descending order (higher count first)
+}
 
-  std::set<std::string> &set = this->sharedResult->resultContributors;
+std::vector<std::pair<std::string, int>> resultInterpreter::rankContributors() {
+  // Sort the map
+  std::vector<std::pair<std::string, int>> vec;
+  auto &map = this->sharedResult->contributorCounts;
+
+  for (auto &it : map) {
+    vec.push_back(it);
+  }
+
+  std::sort(vec.begin(), vec.end(), this->compareContributors);
+
+  return vec;
+}
+
+void resultInterpreter::printGitAttributes() {
+  auto contributorsVec = this->rankContributors();
 
   fmt::print("\n📌 Repository Stats\n");
   fmt::print("═════════════════════════════\n");
   fmt::print("🔢 Total Commits: {}\n", this->sharedResult->resultNrOfCommits);
-  fmt::print("👥 Contributors:\n{} \n", fmt::join(set, "\n"));
+  fmt::print("👥 Contributors: (Ranked highest to lowest)\n");
+
+  // Print each contributor in a clean format.
+  for (const auto &contributor : contributorsVec) {
+    fmt::print("{}: {} commits\n", contributor.first, contributor.second);
+  }
+
   fmt::print("═════════════════════════════\n");
 }
 

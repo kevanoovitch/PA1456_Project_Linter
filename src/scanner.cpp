@@ -119,12 +119,12 @@ void Scanner::scanGitAttributes() {
   int nrOfCommits = this->myGitScanner->countCommits(this->sharedResult->repo);
 
   // build set of contributors
-  std::set<std::string> Contributors =
+  std::unordered_map<std::string, int> Contributors =
       this->myGitScanner->countContributors(this->sharedResult->repo);
 
   // Write results to struct
 
-  this->sharedResult->resultContributors = Contributors;
+  this->sharedResult->contributorCounts = Contributors;
   this->sharedResult->resultNrOfCommits = nrOfCommits;
 }
 
@@ -307,9 +307,9 @@ int GitScanner::countCommits(git_repository *repository) {
   return commitCount;
 }
 
-std::set<std::string>
+std::unordered_map<std::string, int>
 GitScanner::countContributors(git_repository *repository) {
-  std::set<std::string> result;
+  std::unordered_map<std::string, int> result;
 
   int commitCount = 0;
   git_revwalk *walker;
@@ -334,7 +334,7 @@ GitScanner::countContributors(git_repository *repository) {
     if (author) {
       std::string contributor =
           std::string(author->name) + " <" + author->email + ">";
-      result.insert(contributor);
+      result[contributor]++;
     }
   }
 

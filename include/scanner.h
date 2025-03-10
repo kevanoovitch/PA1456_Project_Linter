@@ -87,7 +87,8 @@ private:
 class GitScanner {
 public:
   GitScanner(Scanner *scanner);
-  std::set<std::string> countContributors(git_repository *repository);
+  std::unordered_map<std::string, int>
+  countContributors(git_repository *repository);
   int countCommits(git_repository *repository);
 
 private:

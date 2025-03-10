@@ -37,7 +37,7 @@
         }
     },
     "custom": {
-        "repoPath": "",
+        "repoPath": null,
 
         "minimalOutput": null,
 

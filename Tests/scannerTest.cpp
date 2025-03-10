@@ -152,10 +152,10 @@ TEST(ScannerGitOperations, findGitAtributes) {
 
   // List contributors -friend function
 
-  std::set<std::string> contributorsSet =
+  std::unordered_map<std::string, int> contributorsMap =
       myScanner.myGitScanner->countContributors(myScanner.sharedResult->repo);
 
-  int nrOfContributors = contributorsSet.size();
+  int nrOfContributors = contributorsMap.size();
 
   EXPECT_GT(nrOfContributors, 0)
       << "Expected commit count to be bigger than 1 but it wasn't";
@@ -164,5 +164,5 @@ TEST(ScannerGitOperations, findGitAtributes) {
   myScanner.scanGitAttributes();
 
   EXPECT_GT(myScanner.sharedResult->resultNrOfCommits, 0);
-  EXPECT_GT(myScanner.sharedResult->resultContributors.size(), 0);
+  EXPECT_GT(myScanner.sharedResult->contributorCounts.size(), 0);
 }
