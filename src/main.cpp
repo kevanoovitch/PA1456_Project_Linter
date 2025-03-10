@@ -1,3 +1,4 @@
+#include "configHandler.h"
 #include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"
@@ -10,14 +11,15 @@
 using namespace constants;
 using namespace CommonSearchTerms;
 
-// Will call all the functions needed
-
 int main() {
   git_libgit2_init();
 
   std::string userInput;
   inputHandler userInputHandler;
   fileManager filesys;
+
+  configHandler config;
+  config.configure();
 
   std::cout << "Welcome to the Linter prototype" << std::endl;
   std::cout << "Please input an URL or a absolute Path to a GitHub repositoy "
@@ -35,17 +37,13 @@ int main() {
     return 1; // Exit or handle error
   }
 
-  if (userInputHandler.getIsUrl() == true) {
-    filesys.checkAndClear(REPOSITORY_PATH);
-  }
-
   userInputHandler.executeStrategy();
 
   // Scanning
 
   Scanner theScanner(userInputHandler);
 
-  resultInterpreter theResult(theScanner.myResults);
+  resultInterpreter theResult(userInputHandler);
 
   theScanner.scanFor(gitIgnoreAlts, GIT_IGNORE);
 

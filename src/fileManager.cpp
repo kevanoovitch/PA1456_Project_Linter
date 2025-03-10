@@ -18,24 +18,21 @@ bool fileManager::isEmpty(std::string path) {
   return false;
 }
 
-void fileManager::checkAndClear(std::string path, std::istream &in) {
+void fileManager::mkdir(std::string path) {
+  std::filesystem::create_directory(path);
+}
+
+void fileManager::checkAndClear(std::string path) {
+
+  if (!this->dirExists(path)) {
+
+    this->mkdir(path);
+    return;
+  }
 
   if (this->isEmpty(path) != true) {
-    std::string response;
-    std::cout << path << " this was not empty!" << std::endl;
-    std::cout << "Do you want to empty this folder? (y/n)" << std::endl;
-    in >> response; // in is cin by default if something was passed it will be
-                    // mock input
-    if (response == "y") {
-      this->clearDir(path);
-    } else {
-      std::cerr
-          << "Warning /Repository not cleared and not recloned. Are you sure "
-             "you are "
-             "checking the correct repository? If not end the restart the "
-             "program."
-          << std::endl;
-    }
+
+    this->clearDir(path);
   }
 }
 

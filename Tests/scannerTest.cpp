@@ -17,12 +17,12 @@ TEST(ScannerOperations, findRequiredFiles) {
   fileManager filesys;
 
   filesys.clearDir(REPOSITORY_PATH);
-  handler.pickStrategy(URL_REPO_WITH_ALL);
+  handler.pickStrategy(FOLDER_DUMMY_ALL);
   handler.executeStrategy();
 
   // Execute Tests
-  Scanner myScanner;
-  resultInterpreter interpret(myScanner.myResults);
+  Scanner myScanner(handler);
+  resultInterpreter interpret(handler);
   bool searchResult = false;
 
   searchResult = interpret.isFound(GIT_IGNORE);
@@ -73,12 +73,12 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
 
   filesys.clearDir(REPOSITORY_PATH);
 
-  handler.pickStrategy(URL_REPO_SMALL_SIZE);
+  handler.pickStrategy(FOLDER_DUMMY_NONE);
   handler.executeStrategy();
 
   // Execute Tests
-  Scanner myScanner;
-  resultInterpreter interpret(myScanner.myResults);
+  Scanner myScanner(handler);
+  resultInterpreter interpret(handler);
   bool searchResult = false;
 
   // gitIgnore
@@ -139,39 +139,30 @@ TEST(ScannerGitOperations, findGitAtributes) {
   // Execute Tests
   Scanner myScanner(handler);
 
-  resultInterpreter interpret(myScanner.myResults);
+  resultInterpreter interpret(handler);
   int commitResult = 0;
 
   // Count commits - friend function
 
-  commitResult = myScanner.myGitScanner->countCommits(myScanner.repo);
+  commitResult =
+      myScanner.myGitScanner->countCommits(myScanner.sharedResult->repo);
 
   EXPECT_GT(commitResult, 0)
       << "Expected commit count to be bigger than 1 but it wasn't";
 
-  std::cerr << "\n";
-  std::cerr << "GITLIB ERROR from GitScanner::countCommits: "
-            << git_error_last()->message << std::endl;
-  std::cerr << "\n";
-
   // List contributors -friend function
 
   std::set<std::string> contributorsSet =
-      myScanner.myGitScanner->countContributors(myScanner.repo);
+      myScanner.myGitScanner->countContributors(myScanner.sharedResult->repo);
 
   int nrOfContributors = contributorsSet.size();
 
   EXPECT_GT(nrOfContributors, 0)
       << "Expected commit count to be bigger than 1 but it wasn't";
 
-  std::cerr << "\n";
-  std::cerr << "GITLIB ERROR from GitScanner::countContributors: "
-            << git_error_last()->message << std::endl;
-  std::cerr << "\n";
-
   // List and count git attributes and write to result - proper method
   myScanner.scanGitAttributes();
 
-  EXPECT_GT(myScanner.myResults->resultNrOfCommits, 0);
-  EXPECT_GT(myScanner.myResults->resultContributors.size(), 0);
+  EXPECT_GT(myScanner.sharedResult->resultNrOfCommits, 0);
+  EXPECT_GT(myScanner.sharedResult->resultContributors.size(), 0);
 }

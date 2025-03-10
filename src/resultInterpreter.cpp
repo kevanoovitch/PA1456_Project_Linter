@@ -1,5 +1,7 @@
 #include "resultInterpreter.h"
+#include "configHandler.h"
 #include "constants.h"
+#include "git2.h"
 #include <fmt/core.h>
 #include <fmt/ranges.h>
 
@@ -9,13 +11,13 @@ using namespace constants;
  *                  Result Interpreter                    *
  **********************************************************/
 
-resultInterpreter::resultInterpreter(std::shared_ptr<scanResults> res) {
-  this->results = res;
+resultInterpreter::resultInterpreter(const inputHandler &inputHandler) {
+  this->sharedResult = inputHandler.sharedResult;
 }
 
 bool resultInterpreter::isFound(std::string resultEntry) {
 
-  std::unordered_map<std::string, bool> &map = results->foundMap;
+  std::unordered_map<std::string, bool> &map = sharedResult->foundMap;
   auto it = map.find(resultEntry);
   if (it != map.end()) {
     if (it->second == true) {
@@ -27,8 +29,9 @@ bool resultInterpreter::isFound(std::string resultEntry) {
 
 void resultInterpreter::interpretLeaks() {
 
-  std::unique_ptr<resultEntry> entryPtr = std::make_unique<leaksEntry>(results);
-  entryPtr->entryName = "Credential Leaks";
+  std::unique_ptr<resultEntry> entryPtr =
+      std::make_unique<leaksEntry>(sharedResult);
+  entryPtr->entryName = LEAK_STRING;
   this->AllResultEntries.push_back(std::move(entryPtr));
 }
 
@@ -36,7 +39,7 @@ void resultInterpreter::interpretResults() {
 
   // Migrate data
   // Look through the whole found map
-  for (auto it : results->foundMap) {
+  for (auto it : sharedResult->foundMap) {
 
     std::string currrentName = it.first;
 
@@ -49,9 +52,9 @@ void resultInterpreter::interpretResults() {
     entryPtr->isFound = it.second;
 
     // move the paths from the map to the entry object
-    auto vectorIt = results->pathsMap.find(currrentName);
+    auto vectorIt = sharedResult->pathsMap.find(currrentName);
     std::vector<std::string> oldPathsCollection;
-    if (vectorIt != results->pathsMap.end()) {
+    if (vectorIt != sharedResult->pathsMap.end()) {
       oldPathsCollection = vectorIt->second; // Reference to existing vector
     }
 
@@ -73,15 +76,15 @@ void resultInterpreter::interpretResults() {
 std::unique_ptr<resultEntry>
 resultInterpreter::pickAndCreateEntry(std::string name) {
   if (name == README) {
-    return std::make_unique<readmeEntry>(results);
+    return std::make_unique<readmeEntry>(sharedResult);
   } else if (name == LICENSE) {
-    return std::make_unique<licenseEntry>(results);
+    return std::make_unique<licenseEntry>(sharedResult);
   } else if (name == WORKFLOW_STRING) {
-    return std::make_unique<workflowEntry>(results);
+    return std::make_unique<workflowEntry>(sharedResult);
   } else if (name == GIT_IGNORE) {
-    return std::make_unique<gitignoreEntry>(results);
+    return std::make_unique<gitignoreEntry>(sharedResult);
   } else if (name == TEST_STRING) {
-    return std::make_unique<testEntry>(results);
+    return std::make_unique<testEntry>(sharedResult);
   } else {
     throw std::runtime_error("Unknown entry type: " + name);
   }
@@ -107,39 +110,27 @@ void resultInterpreter::printDetails() {
 
 void resultInterpreter::printGitAttributes() {
 
-  std::set<std::string> &set = this->results->resultContributors;
+  std::set<std::string> &set = this->sharedResult->resultContributors;
 
   fmt::print("\n📌 Repository Stats\n");
   fmt::print("═════════════════════════════\n");
-  fmt::print("🔢 Total Commits: {}\n", this->results->resultNrOfCommits);
+  fmt::print("🔢 Total Commits: {}\n", this->sharedResult->resultNrOfCommits);
   fmt::print("👥 Contributors:\n{} \n", fmt::join(set, "\n"));
   fmt::print("═════════════════════════════\n");
-}
-
-/**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-scanResults::scanResults() {
-  this->foundMap[GIT_IGNORE] = false;
-  this->foundMap[WORKFLOW_STRING] = false;
-  this->foundMap[LICENSE] = false;
-  this->foundMap[README] = false;
-  this->foundMap[TEST_STRING] = false;
 }
 
 /**********************************************************
  *                  Result Entry Strategy                 *
  **********************************************************/
 resultEntry::resultEntry(std::shared_ptr<scanResults> res) {
-  this->myResults = res;
+  this->sharedResult = res;
   this->Indication = WHITE;
 }
 
 resultEntry::resultEntry() { this->Indication = WHITE; }
 
 void resultEntry::VerifyIfFound(std::string name) {
-  if (myResults->foundMap[name] == false) {
+  if (sharedResult->foundMap[name] == false) {
     this->Indication = RED;
     this->IndicationReason = "Was not found";
   } else {
@@ -154,11 +145,25 @@ void resultEntry::noMoreThanOne(std::string name) {
   }
 }
 
+void resultEntry::applyFileConfigRules() {
+
+  auto &fileReqs = config::fileReqs[this->entryName].properties;
+
+  this->allowMultiple = fileReqs["allowMultiple"];
+  this->requireContent = fileReqs["requiresContent"];
+  this->required = fileReqs["required"];
+}
+
 void resultEntry::parentPrintEntry() {
 
   std::vector<std::string> paths = this->paths;
   fmt::print("{} {}\n", this->Indication, this->entryName);
   fmt::print("    Reason: {}\n", this->IndicationReason);
+
+  if (this->Indication == RED) {
+    fmt::print("    Read more:\n    {}\n", this->readMore);
+  }
+
   fmt::print("    Paths:\n");
   for (const auto &path : paths) {
     fmt::print("      - {}\n", path);
@@ -197,28 +202,72 @@ void resultEntry::checkContents() {
   }
 }
 
+bool resultEntry::crossRefrenceIgnore(std::string path) {
+
+  auto &repo = this->sharedResult->repo;
+
+  int crossRefResult = 0;
+
+  git_ignore_path_is_ignored(&crossRefResult, repo, path.c_str());
+
+  // If crossRefResult is 1, the path is ignored;
+  if (crossRefResult == 1) {
+    return true;
+  }
+
+  return false;
+}
+
+void resultEntry::implicitIndication() {
+
+  if (Indication == GREEN) {
+    this->IndicationReason = NIL;
+    this->Indication = GREEN;
+    return;
+  }
+
+  if (Indication == WHITE) {
+
+    this->IndicationReason = NO_CHECKS;
+  }
+}
+
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
 readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
-  this->myResults = res;
+  this->sharedResult = res;
   this->Indication = WHITE;
 }
 
 void readmeEntry::indicatorDeterminator() {
+
+  // Prepare the link to read more
+  readMore = LINK_README;
+
+  applyFileConfigRules();
+
   // check if not found --> red
-  this->VerifyIfFound(README);
 
-  // check if several --> yellow
-  this->noMoreThanOne(README);
-
-  // check contents --> yellow/red
-  this->checkContents();
-
-  // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+  if (this->required == true) {
+    this->VerifyIfFound(README);
   }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(README);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    if (this->Indication != YELLOW) {
+      /* If not several were found */
+      // check contents --> yellow/red
+      this->checkContents();
+    }
+  }
+
+  // Implicit indication if white no checks if green all passed
+  implicitIndication();
 }
 
 void readmeEntry::printEntry() { parentPrintEntry(); }
@@ -228,20 +277,36 @@ void readmeEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
   this->Indication = WHITE;
-  this->myResults = res;
+  this->sharedResult = res;
 }
 
 void licenseEntry::indicatorDeterminator() {
-  // check if not found --> red
-  this->VerifyIfFound(LICENSE);
 
-  // check contents --> yellow/red
-  this->checkContents();
+  // Prepare the link to read more
+  readMore = LINK_LICENSE;
+
+  applyFileConfigRules();
+
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(LICENSE);
+  }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(LICENSE);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    if (this->Indication != YELLOW) {
+      /* If not several were found */
+      // check contents --> yellow/red
+      this->checkContents();
+    }
+  }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
-  }
+  implicitIndication();
 }
 
 void licenseEntry::printEntry() { parentPrintEntry(); }
@@ -251,13 +316,28 @@ void licenseEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void workflowEntry::indicatorDeterminator() {
-  // check if not found --> red
-  this->VerifyIfFound(WORKFLOW_STRING);
+
+  // Prepare the link to read more
+  readMore = LINK_WORKFLOW;
+
+  applyFileConfigRules();
+
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(WORKFLOW_STRING);
+  }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(WORKFLOW_STRING);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    this->checkContents();
+  }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
-  }
+  implicitIndication();
 }
 
 void workflowEntry::printEntry() { parentPrintEntry(); }
@@ -267,19 +347,28 @@ void workflowEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void gitignoreEntry::indicatorDeterminator() {
-  // check if not found --> red
-  this->VerifyIfFound(GIT_IGNORE);
 
-  // check if several --> yellow
-  this->noMoreThanOne(GIT_IGNORE);
+  // Prepare the link to read more
+  readMore = LINK_IGNORE;
 
-  // check contents --> yellow/red
-  this->checkContents();
+  applyFileConfigRules();
+
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(WORKFLOW_STRING);
+  }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(WORKFLOW_STRING);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    this->checkContents();
+  }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
-  }
+  implicitIndication();
 }
 
 void gitignoreEntry::printEntry() { parentPrintEntry(); }
@@ -289,8 +378,9 @@ void gitignoreEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void leaksEntry::indicatorDeterminator() {
+
   // check if found --> red
-  auto &leaksMap = myResults->leaksReasonAndFilepathSet;
+  auto &leaksMap = sharedResult->leaksReasonAndFilepathSet;
 
   if (leaksMap.empty()) {
     this->Indication = GREEN;
@@ -304,7 +394,7 @@ void leaksEntry::indicatorDeterminator() {
   }
 
   if (Indication == GREEN) {
-    this->IndicationReason = "No issues detected";
+    this->IndicationReason = NIL;
   }
 }
 
@@ -334,10 +424,45 @@ void leaksEntry::printEntry() {
  **********************************************************/
 void testEntry::indicatorDeterminator() {
 
+  // Prepare the link to read more
+  readMore = LINK_TESTS;
+
+  applyFileConfigRules();
+
+  int countValidTestFiles = 0;
+
+  if (this->required == false) {
+    // if not required --> white
+    implicitIndication();
+    return;
+  }
+
   // create a fileManager object
   fileManager testFsHelper;
 
-  if (myResults->foundMap[TEST_STRING] == false) {
+  // cross refrence and remove all files that are ignore accroding to the
+  // gitIgnore
+  auto &vec = this->paths;
+
+  if (this->sharedResult->foundMap[GIT_IGNORE] == true) {
+    // Only crossRef if there is a gitIgnore
+
+    for (auto it = vec.begin(); it != vec.end();) {
+      // Check contents
+
+      if (crossRefrenceIgnore(*it) == true) {
+
+        // remove paths that are ignored
+
+        it = vec.erase(it);
+
+      } else {
+        it++;
+      }
+    }
+  }
+
+  if (sharedResult->foundMap[TEST_STRING] == false) {
     /* No unit test found which is bad */
     this->Indication = RED;
     this->IndicationReason = "No unit tests found!";
@@ -345,35 +470,45 @@ void testEntry::indicatorDeterminator() {
   }
 
   // for each path entry
-  auto &vec = this->paths;
-  for (auto it = vec.begin(); it != vec.end();) {
-    // Check contents
 
-    if (!testFsHelper.checkContentsIsEmpty(*it)) {
+  if (this->requireContent == true) {
+    for (auto it = vec.begin(); it != vec.end();) {
+      // Check contents
 
-      // remove paths that lead to testing dir/files with contents
+      if (!testFsHelper.checkContentsIsEmpty(*it)) {
 
-      it = vec.erase(it);
+        // remove paths that lead to testing dir/files with contents
 
-    } else {
-      it++;
+        it = vec.erase(it);
+        countValidTestFiles++;
+
+      } else {
+        it++;
+      }
     }
+
+    // make determinations
+
+    if (vec.empty()) {
+      /* all paths had contents */
+
+      this->Indication = GREEN;
+      this->IndicationReason = "No issues detected";
+      return;
+    }
+
+    // Some paths were empty
+
+    this->Indication = YELLOW;
+    this->IndicationReason = "These testing entries lacked content";
   }
 
-  // make determinations
-
-  if (vec.empty()) {
-    /* all paths had contents */
-
-    this->Indication = GREEN;
-    this->IndicationReason = "No issues detected";
+  if (allowMultiple == false && countValidTestFiles > 1) {
+    // check if several --> yellow
+    this->Indication = YELLOW;
+    this->IndicationReason = "Several test files were found";
     return;
   }
-
-  // Some paths were empty
-
-  this->Indication = YELLOW;
-  this->IndicationReason = "Theese testing entries lacked content";
 }
 
 void testEntry::printEntry() { parentPrintEntry(); }

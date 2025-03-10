@@ -1,27 +1,13 @@
 #pragma once
+#include "inputHandler.h"
 #include "scanner.h"
 
 /**********************************************************
  *                  Forward Declaration                   *
  **********************************************************/
 class resultEntry;
-
-/**********************************************************
- *                          Scan Results                  *
- **********************************************************/
-
-struct scanResults {
-  std::unordered_map<std::string, bool> foundMap;
-  std::unordered_map<std::string, std::vector<std::string>> pathsMap;
-
-  int resultNrOfCommits;
-  std::set<std::string> resultContributors;
-
-  std::unordered_map<std::string, std::set<std::string>>
-      leaksReasonAndFilepathSet;
-  // Default constructor for struct
-  scanResults();
-};
+struct scanResults;
+class inputHandler;
 
 /**********************************************************
  *                  Result Interpreter                    *
@@ -29,7 +15,7 @@ struct scanResults {
 
 class resultInterpreter {
 public:
-  resultInterpreter(std::shared_ptr<scanResults> res);
+  resultInterpreter(const inputHandler &inputHandler);
   bool isFound(std::string entry);
 
   void printDetails();
@@ -39,7 +25,7 @@ public:
 
 private:
   void printGitAttributes();
-  std::shared_ptr<scanResults> results;
+  std::shared_ptr<scanResults> sharedResult;
   std::unique_ptr<resultEntry> pickAndCreateEntry(std::string name);
 };
 
@@ -59,15 +45,24 @@ public:
   bool isFound;
   std::string Indication;
   std::string IndicationReason;
+  std::string readMore;
+
+  bool allowMultiple;
+  bool requireContent;
+  bool required;
 
 protected:
-  std::shared_ptr<scanResults> myResults;
+  std::shared_ptr<scanResults> sharedResult;
   // Shared algorithms
 
   void VerifyIfFound(std::string name);
   void noMoreThanOne(std::string name);
   void checkContents();
   void parentPrintEntry();
+  bool crossRefrenceIgnore(std::string path);
+  void implicitIndication();
+
+  void applyFileConfigRules();
 };
 
 /**********************************************************

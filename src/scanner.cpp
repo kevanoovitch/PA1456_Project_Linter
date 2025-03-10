@@ -2,6 +2,8 @@
 #include "constants.h"
 #include "regex"
 #include <array>
+#include <bits/stdc++.h>
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -15,21 +17,11 @@ using namespace constants;
  *                          Scanner                       *
  **********************************************************/
 
-Scanner::Scanner() {
-  this->mySearcher = new Searcher(this);
-  this->myResults = std::make_shared<scanResults>();
-  this->repoPath = REPOSITORY_PATH;
-  this->fileManagerPtr = new fileManager;
-  this->repo = nullptr;
-  this->myGitScanner = new GitScanner(this);
-}
-
 Scanner::Scanner(const inputHandler &inputHandler) {
   this->mySearcher = new Searcher(this);
-  this->myResults = std::make_shared<scanResults>();
+  this->sharedResult = inputHandler.sharedResult;
   this->repoPath = inputHandler.localPath;
   this->fileManagerPtr = new fileManager;
-  this->repo = inputHandler.repo;
   this->myGitScanner = new GitScanner(this);
 }
 
@@ -43,11 +35,11 @@ void Scanner::scanForWorkflow() {
 
   // Workflow scan has to first make sure the requried Dir exists
 
-  if (fileManagerPtr->dirExists(this->repoPath + "/.github/workflows") ==
-      false) {
+  if (fileManagerPtr->dirExists(WORKFLOW_PATH) == false) {
 
-    myResults->foundMap[WORKFLOW_STRING] = false;
+    sharedResult->foundMap[WORKFLOW_STRING] = false;
 
+    return;
   } else {
 
     std::vector<std::string> workflowFileExtensions = {".yml", ".yaml"};
@@ -74,7 +66,7 @@ void Scanner::scanForTest(std::vector<std::string> searchAlts,
 
       for (int i = 0; i < resultVectorPaths.size(); i++) {
         // Push back each path to the result struct
-        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+        sharedResult->pathsMap[NAME].push_back(resultVectorPaths[i]);
       }
     }
   }
@@ -99,7 +91,7 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
 
       for (int i = 0; i < resultVectorPaths.size(); i++) {
         // Push back each path to the result struct
-        myResults->pathsMap[NAME].push_back(resultVectorPaths[i]);
+        sharedResult->pathsMap[NAME].push_back(resultVectorPaths[i]);
       }
     }
   }
@@ -107,33 +99,33 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
 
 void Scanner::setFoundMap(bool isFound, std::string Name) {
   if (isFound == true) {
-    myResults->foundMap[Name] = true;
+    sharedResult->foundMap[Name] = true;
   }
 }
 
 void Scanner::pushBackPath(std::pair<std::string, std::string> nameAndPath) {
 
-  myResults->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
+  sharedResult->pathsMap[nameAndPath.first].push_back(nameAndPath.second);
 }
 
 void Scanner::scanGitAttributes() {
 
-  if (this->repo == nullptr) {
+  if (this->sharedResult->repo == nullptr) {
     std::cerr << "Error in Scanner::scanGitAttributes() repo was nullptr\n";
     return;
   }
 
   // count commits
-  int nrOfCommits = this->myGitScanner->countCommits(this->repo);
+  int nrOfCommits = this->myGitScanner->countCommits(this->sharedResult->repo);
 
   // build set of contributors
   std::set<std::string> Contributors =
-      this->myGitScanner->countContributors(this->repo);
+      this->myGitScanner->countContributors(this->sharedResult->repo);
 
   // Write results to struct
 
-  this->myResults->resultContributors = Contributors;
-  this->myResults->resultNrOfCommits = nrOfCommits;
+  this->sharedResult->resultContributors = Contributors;
+  this->sharedResult->resultNrOfCommits = nrOfCommits;
 }
 
 void Scanner::setRepoPath(std::string path) { this->repoPath = path; }
@@ -153,7 +145,7 @@ void Scanner::parseGitleaksOutput(const std::string &jsonFilePath) {
     // 🔹 Loop through each detected secret
     for (const auto &leak : report) {
 
-      auto &leaksmap = this->myResults->leaksReasonAndFilepathSet;
+      auto &leaksmap = this->sharedResult->leaksReasonAndFilepathSet;
 
       leaksmap[leak["Description"]].insert(leak["File"]);
     }
@@ -164,8 +156,8 @@ void Scanner::parseGitleaksOutput(const std::string &jsonFilePath) {
 
 void Scanner::runGitLeaks() {
 
-  std::string command =
-      "gitleaks dir " + repoPath + " -r " + PATH_REPORT_CREDENTIALS + " 2>&1";
+  std::string command = "gitleaks dir " + repoPath + " -r " +
+                        PATH_REPORT_CREDENTIALS + " --no-banner";
 
   FILE *pipe = popen(command.c_str(), "r");
   if (!pipe) {
@@ -185,6 +177,8 @@ void Scanner::runGitLeaks() {
 
   parseGitleaksOutput(PATH_REPORT_CREDENTIALS);
 }
+
+std::string Scanner::getRepoPath() { return this->repoPath; }
 
 /**********************************************************
  *                          Searcher                      *
@@ -217,6 +211,17 @@ std::vector<std::string> Searcher::searchFor(std::string path,
   return pathsToFoundFiles;
 };
 
+std::string Searcher::makeRelToGitRoot(std::string absPath) {
+
+  std::filesystem::path repoRoot =
+      std::filesystem::canonical(this->myScanner->getRepoPath());
+  std::filesystem::path absWherePath = std::filesystem::canonical(absPath);
+  std::filesystem::path relWherePath =
+      std::filesystem::relative(absWherePath, repoRoot);
+
+  return relWherePath;
+}
+
 std::vector<std::string> Searcher::search(std::string wherePath,
                                           std::string pattern) {
 
@@ -226,10 +231,15 @@ std::vector<std::string> Searcher::search(std::string wherePath,
 
   for (auto const &dir_entry :
        std::filesystem::recursive_directory_iterator(wherePath)) {
-    std::string filenamePathRelative =
+    std::string absfilenamePath =
         dir_entry.path().string(); // Convert to string
 
-    if (regex_search(filenamePathRelative, r)) {
+    // make path relative
+    std::string tmpRelPath = this->makeRelToGitRoot(absfilenamePath);
+    // convert to lower
+    std::string tmpLowerPath = this->lower(tmpRelPath);
+
+    if (regex_search(tmpLowerPath, r)) {
 
       std::string filenamePathAbsolute =
           std::filesystem::absolute(dir_entry).string();
@@ -250,9 +260,18 @@ std::vector<std::string> Searcher::endsWithFile(std::string wherePath,
 
 std::vector<std::string> Searcher::contains(std::string wherePath,
                                             std::string searchFor) {
+
   std::string pattern = (searchFor);
 
   return this->search(wherePath, pattern);
+}
+
+std::string Searcher::lower(std::string str) {
+  // Source:
+  // https://www.geeksforgeeks.org/how-to-convert-std-string-to-lower-case-in-cpp/
+
+  transform(str.begin(), str.end(), str.begin(), ::tolower);
+  return str;
 }
 
 /**********************************************************

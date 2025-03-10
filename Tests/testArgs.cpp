@@ -15,4 +15,10 @@ const std::string FOLDER_ABSOLUTE_REPO_TIMER_APP =
     "/home/kevin/Github_Repository/TimerApplication";
 const std::string FOLDER_ABSOLUTE_WITH_ALL =
     "/home/kevin/Github_Repository/exercise-use-gitignore";
+const std::string FOLDER_DUMMY_ALL = "../Tests/dummyRepos/dummyHasAll";
+
+const std::string FOLDER_DUMMY_NONE = "../Tests/dummyRepos/dummyHasNone";
+
+const std::string CONFIG_DEFAULT = "../Tests/testConfigDefaults.json";
+const std::string CONFIG_NO_SCAN = "../Tests/testConfigNoScan.json";
 } // namespace TestArgs

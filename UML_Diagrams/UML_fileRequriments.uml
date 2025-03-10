@@ -38,6 +38,7 @@ object "Credentials"{
 object "Test"{
   Missing = 🔴
   LacksContents = 🟡
+  <<cross refrences gitignore>>
   NoneOfTheAbove = 🟢
 }
 

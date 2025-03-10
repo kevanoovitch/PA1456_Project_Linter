@@ -3,16 +3,23 @@
 
 
 #ignore build files
-Code/build/
+/build
 
 #ignore the repository temp dir
-Code/Repository
+/Repository
+/Repository/*
 
 #ignore 
 UML_Diagrams/*.png
 
-Code/Repository/*
+
 
 *.clang-format
 
 .vscode/
+
+UML_Diagrams/out build/
+/build
+
+#ignore dummy repos since they have .git's in them
+/Tests/dummyRepos

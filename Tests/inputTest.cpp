@@ -20,7 +20,7 @@ TEST(fsBasics, memberTest) {
 
   file.open(TESTDIR_PATH + "/test.txt");
   file.close();
-  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
+  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false) << "should not be empty";
 
   filesys.clearDir(TESTDIR_PATH);
 
@@ -29,14 +29,7 @@ TEST(fsBasics, memberTest) {
   file.open(TESTDIR_PATH + "/test.txt");
   file.close();
 
-  std::istringstream simulatedNo("n");
-
-  filesys.checkAndClear(TESTDIR_PATH, simulatedNo);
-
-  ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false);
-
-  std::istringstream simulatedYes("y");
-  filesys.checkAndClear(TESTDIR_PATH, simulatedYes);
+  filesys.checkAndClear(TESTDIR_PATH);
   ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), true);
 }
 
@@ -98,12 +91,6 @@ TEST(typeURL, URLhandling) {
   }
 
   handler1.executeStrategy();
-
-  if (git_error_last != nullptr) {
-    std::cout << "\n";
-    std::cout << "GITLIB ERROR: " << git_error_last()->message << std::endl;
-    std::cout << "\n";
-  }
 
   ASSERT_EQ(handler1.processSuccess, true)
       << "Failed to process input using URL (Was /Repository not empty?)";

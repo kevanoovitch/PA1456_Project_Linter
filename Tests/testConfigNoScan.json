@@ -1,0 +1,70 @@
+
+
+{
+    "defaults": {
+        "repoPath": "../Repository",
+
+        ".gitignore": {
+            "required" : true,
+            "allowMultiple" : false,
+            "requiresContent" : true
+        },
+
+        "Workflow": {
+            "required" : true,
+            "allowMultiple" : true,
+            "requiresContent" : true
+        },
+
+        "License": {
+            "required" : true,
+            "allowMultiple" : false,
+            "requiresContent" : true
+        },
+
+        "readMe": {
+            "required" : true,
+            "allowMultiple" : false,
+            "requiresContent" : true
+        },
+
+        "tests": {
+            "required" : true,
+            "allowMultiple" : true,
+            "requiresContent" : true
+        }
+    },
+    "custom": {
+        "repoPath": "",
+
+        ".gitignore": {
+            "required" : false,
+            "allowMultiple" : null,
+            "requiresContent" : null
+        },
+
+        "Workflow": {
+            "required" : false,
+            "allowMultiple" : null,
+            "requiresContent" : null
+        },
+
+        "License": {
+            "required" : false,
+            "allowMultiple" : null,
+            "requiresContent" : null
+        },
+
+        "readMe": {
+            "required" : false,
+            "allowMultiple" : null,
+            "requiresContent" : null
+        },
+
+        "tests": {
+            "required" : false,
+            "allowMultiple" : null,
+            "requiresContent" : null
+        }
+    }
+}

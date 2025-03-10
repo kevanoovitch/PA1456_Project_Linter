@@ -15,6 +15,7 @@
 class Searcher;
 struct scanResults;
 class GitScanner;
+class inputHandler;
 
 /**********************************************************
  *                          Scanner                       *
@@ -22,7 +23,6 @@ class GitScanner;
 
 class Scanner {
 public:
-  Scanner();
   Scanner(const inputHandler &inputHandler);
   ~Scanner();
 
@@ -37,13 +37,13 @@ public:
 
   void setRepoPath(std::string path);
   void setFoundMap(bool isFound, const std::string name);
+  std::string getRepoPath();
 
-  std::shared_ptr<scanResults> myResults;
+  std::shared_ptr<scanResults> sharedResult;
 
 private:
   Searcher *mySearcher;
-  std::string repoPath;
-  git_repository *repo;
+  std::string repoPath; // at construction is root
   fileManager *fileManagerPtr;
   GitScanner *myGitScanner;
 
@@ -76,6 +76,8 @@ public:
 private:
   Scanner *myScanner;
   std::vector<std::string> search(std::string wherePath, std::string pattern);
+  std::string lower(std::string str);
+  std::string makeRelToGitRoot(std::string absPath);
 };
 
 /**********************************************************
