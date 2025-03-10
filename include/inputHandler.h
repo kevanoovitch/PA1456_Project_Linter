@@ -23,7 +23,8 @@ struct scanResults {
   std::unordered_map<std::string, std::vector<std::string>> pathsMap;
 
   int resultNrOfCommits;
-  std::set<std::string> resultContributors;
+  std::unordered_map<std::string, int>
+      contributorCounts; // name : amount of commits
 
   std::unordered_map<std::string, std::set<std::string>>
       leaksReasonAndFilepathSet;

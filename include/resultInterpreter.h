@@ -28,6 +28,9 @@ private:
   void printGitAttributes();
   std::shared_ptr<scanResults> sharedResult;
   std::unique_ptr<resultEntry> pickAndCreateEntry(std::string name);
+  std::vector<std::pair<std::string, int>> rankContributors();
+  static bool compareContributors(const std::pair<std::string, int> &a,
+                                  const std::pair<std::string, int> &b);
 };
 
 /**********************************************************
