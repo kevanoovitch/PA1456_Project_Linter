@@ -1,6 +1,7 @@
 #include "resultInterpreter.h"
 #include "configHandler.h"
 #include "constants.h"
+#include "errorStatus.h"
 #include "git2.h"
 #include <fmt/core.h>
 #include <fmt/ranges.h>
@@ -119,6 +120,12 @@ void resultInterpreter::printGitAttributes() {
   fmt::print("═════════════════════════════\n");
 }
 
+void resultInterpreter::printMinimal() {
+  // Print minimal output
+  std::cout << "Exit code: " << errorStatus::statusInt << std::endl;
+  std::cout << "Message: " << errorStatus::statusMessage << std::endl;
+}
+
 /**********************************************************
  *                  Result Entry Strategy                 *
  **********************************************************/
@@ -232,6 +239,14 @@ void resultEntry::implicitIndication() {
   }
 }
 
+void resultEntry::updateError() {
+  if (this->Indication == RED || this->Indication == YELLOW) {
+    errorStatus::statusInt = 1;
+    errorStatus::statusMessage = "Failed linting: " + this->entryName +
+                                 "Reason: " + this->IndicationReason;
+  }
+}
+
 /**********************************************************
  *                        ReadMe                           *
  **********************************************************/
@@ -268,6 +283,8 @@ void readmeEntry::indicatorDeterminator() {
 
   // Implicit indication if white no checks if green all passed
   implicitIndication();
+
+  updateError();
 }
 
 void readmeEntry::printEntry() { parentPrintEntry(); }
@@ -307,6 +324,8 @@ void licenseEntry::indicatorDeterminator() {
 
   // Implicit indication
   implicitIndication();
+
+  updateError();
 }
 
 void licenseEntry::printEntry() { parentPrintEntry(); }
@@ -338,6 +357,8 @@ void workflowEntry::indicatorDeterminator() {
 
   // Implicit indication
   implicitIndication();
+
+  updateError();
 }
 
 void workflowEntry::printEntry() { parentPrintEntry(); }
@@ -369,6 +390,8 @@ void gitignoreEntry::indicatorDeterminator() {
 
   // Implicit indication
   implicitIndication();
+
+  updateError();
 }
 
 void gitignoreEntry::printEntry() { parentPrintEntry(); }
@@ -396,6 +419,8 @@ void leaksEntry::indicatorDeterminator() {
   if (Indication == GREEN) {
     this->IndicationReason = NIL;
   }
+
+  updateError();
 }
 
 void leaksEntry::printEntry() {
@@ -501,12 +526,14 @@ void testEntry::indicatorDeterminator() {
 
     this->Indication = YELLOW;
     this->IndicationReason = "These testing entries lacked content";
+    updateError();
   }
 
   if (allowMultiple == false && countValidTestFiles > 1) {
     // check if several --> yellow
     this->Indication = YELLOW;
     this->IndicationReason = "Several test files were found";
+    updateError();
     return;
   }
 }

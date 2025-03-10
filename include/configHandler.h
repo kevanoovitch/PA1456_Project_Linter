@@ -1,5 +1,7 @@
+#pragma once
 
 #include "constants.h"
+#include "errorStatus.h"
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
@@ -13,6 +15,7 @@ struct fileParams {
 struct config {
   static std::string relRepoPath;
   static std::string relWorkflowPath;
+  static bool minimalOutputMode;
 
   static std::unordered_map<std::string, fileParams> fileReqs;
 };
@@ -20,9 +23,9 @@ struct config {
 class configHandler {
 private:
   nlohmann::json jFile;
-
-  void readConfig(std::string key, std::string &targetValue);
+  template <typename T> void readConfig(std::string key, T &targetValue);
   void readDstPath();
+  void readOutputMode();
   void readIndicationParams();
   void openAndSetConfigFile(std::string path);
   void readFileReq(std::string file, std::string key, bool &targetValue);

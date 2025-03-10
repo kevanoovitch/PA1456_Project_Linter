@@ -1,5 +1,6 @@
 #include "inputHandler.h"
 #include "constants.h"
+
 #include "fileManager.h"
 #include <git2.h>
 #include <regex>

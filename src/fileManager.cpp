@@ -19,7 +19,12 @@ bool fileManager::isEmpty(std::string path) {
 }
 
 void fileManager::mkdir(std::string path) {
-  std::filesystem::create_directory(path);
+
+  std::cout << "making dir: " + path << std::endl;
+
+  if (!std::filesystem::create_directory(path)) {
+    std::cerr << "Failed to create directory " + path << std::endl;
+  }
 }
 
 void fileManager::checkAndClear(std::string path) {

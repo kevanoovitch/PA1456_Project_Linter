@@ -12,6 +12,7 @@ using namespace constants;
 using namespace CommonSearchTerms;
 
 int main() {
+
   git_libgit2_init();
 
   std::string userInput;
@@ -19,6 +20,7 @@ int main() {
   fileManager filesys;
 
   configHandler config;
+
   config.configure();
 
   std::cout << "Welcome to the Linter prototype" << std::endl;
@@ -63,7 +65,13 @@ int main() {
 
   theResult.interpretResults();
 
-  theResult.printDetails();
+  if (config::minimalOutputMode) {
+    theResult.printMinimal();
+    return errorStatus::statusInt;
+  } else {
+    theResult.printDetails();
+    return errorStatus::statusInt;
+  }
 
-  return 0;
+  return errorStatus::statusInt;
 }

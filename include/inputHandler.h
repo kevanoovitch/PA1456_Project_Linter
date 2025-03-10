@@ -1,4 +1,5 @@
 #pragma once
+
 #include "fileManager.h"
 #include "resultInterpreter.h"
 #include <git2.h>

@@ -4,6 +4,8 @@
     "defaults": {
         "repoPath": "../Repository",
 
+        "minimalOutput": false,
+
         ".gitignore": {
             "required" : true,
             "allowMultiple" : false,
@@ -35,7 +37,9 @@
         }
     },
     "custom": {
-        "repoPath": "",
+        "repoPath": null,
+
+        "minimalOutput": null,
 
         ".gitignore": {
             "required" : null,
