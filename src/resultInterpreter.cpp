@@ -31,7 +31,7 @@ void resultInterpreter::interpretLeaks() {
 
   std::unique_ptr<resultEntry> entryPtr =
       std::make_unique<leaksEntry>(sharedResult);
-  entryPtr->entryName = "Credential Leaks";
+  entryPtr->entryName = LEAK_STRING;
   this->AllResultEntries.push_back(std::move(entryPtr));
 }
 
@@ -150,15 +150,8 @@ void resultEntry::applyFileConfigRules() {
   auto &fileReqs = config::fileReqs[this->entryName].properties;
 
   this->allowMultiple = fileReqs["allowMultiple"];
-  this->requireContent = fileReqs["requireContent"];
+  this->requireContent = fileReqs["requiresContent"];
   this->required = fileReqs["required"];
-
-  std::cout << "allow multiple in " << this->entryName << " " << std::boolalpha
-            << this->allowMultiple << std::endl;
-  std::cout << "require content in " << this->entryName << " " << std::boolalpha
-            << this->requireContent << std::endl;
-  std::cout << "required in " << this->entryName << " " << std::boolalpha
-            << this->required << std::endl;
 }
 
 void resultEntry::parentPrintEntry() {
@@ -250,7 +243,7 @@ readmeEntry::readmeEntry(std::shared_ptr<scanResults> res) {
 void readmeEntry::indicatorDeterminator() {
 
   // Prepare the link to read more
-  readMore = linkReadme;
+  readMore = LINK_README;
 
   applyFileConfigRules();
 
@@ -290,18 +283,30 @@ licenseEntry::licenseEntry(std::shared_ptr<scanResults> res) {
 void licenseEntry::indicatorDeterminator() {
 
   // Prepare the link to read more
-  readMore = linkLicense;
+  readMore = LINK_LICENSE;
 
-  // check if not found --> red
-  this->VerifyIfFound(LICENSE);
+  applyFileConfigRules();
 
-  // check contents --> yellow/red
-  this->checkContents();
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(LICENSE);
+  }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(LICENSE);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    if (this->Indication != YELLOW) {
+      /* If not several were found */
+      // check contents --> yellow/red
+      this->checkContents();
+    }
+  }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = NIL;
-  }
+  implicitIndication();
 }
 
 void licenseEntry::printEntry() { parentPrintEntry(); }
@@ -313,15 +318,26 @@ void licenseEntry::printEntry() { parentPrintEntry(); }
 void workflowEntry::indicatorDeterminator() {
 
   // Prepare the link to read more
-  readMore = linkWorkflow;
+  readMore = LINK_WORKFLOW;
 
-  // check if not found --> red
-  this->VerifyIfFound(WORKFLOW_STRING);
+  applyFileConfigRules();
+
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(WORKFLOW_STRING);
+  }
+
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(WORKFLOW_STRING);
+  }
+
+  if (this->requireContent == true || this->required == true) {
+    this->checkContents();
+  }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = NIL;
-  }
+  implicitIndication();
 }
 
 void workflowEntry::printEntry() { parentPrintEntry(); }
@@ -333,24 +349,26 @@ void workflowEntry::printEntry() { parentPrintEntry(); }
 void gitignoreEntry::indicatorDeterminator() {
 
   // Prepare the link to read more
-  readMore = linkIgnore;
+  readMore = LINK_IGNORE;
 
-  // check if not found --> red
-  this->VerifyIfFound(GIT_IGNORE);
+  applyFileConfigRules();
 
-  // check if several --> yellow
-  this->noMoreThanOne(GIT_IGNORE);
+  if (this->required == true) {
+    // check if not found --> red
+    this->VerifyIfFound(WORKFLOW_STRING);
+  }
 
-  // check if several --> yellow
-  if (this->Indication != YELLOW) {
-    /* If not several were found */
+  if (this->allowMultiple == false) {
+    // check if several --> yellow
+    this->noMoreThanOne(WORKFLOW_STRING);
+  }
+
+  if (this->requireContent == true || this->required == true) {
     this->checkContents();
   }
 
   // Implicit indication
-  if (Indication == GREEN) {
-    this->IndicationReason = NIL;
-  }
+  implicitIndication();
 }
 
 void gitignoreEntry::printEntry() { parentPrintEntry(); }
@@ -360,6 +378,7 @@ void gitignoreEntry::printEntry() { parentPrintEntry(); }
  **********************************************************/
 
 void leaksEntry::indicatorDeterminator() {
+
   // check if found --> red
   auto &leaksMap = sharedResult->leaksReasonAndFilepathSet;
 
@@ -406,7 +425,17 @@ void leaksEntry::printEntry() {
 void testEntry::indicatorDeterminator() {
 
   // Prepare the link to read more
-  readMore = linkTests;
+  readMore = LINK_TESTS;
+
+  applyFileConfigRules();
+
+  int countValidTestFiles = 0;
+
+  if (this->required == false) {
+    // if not required --> white
+    implicitIndication();
+    return;
+  }
 
   // create a fileManager object
   fileManager testFsHelper;
@@ -442,34 +471,44 @@ void testEntry::indicatorDeterminator() {
 
   // for each path entry
 
-  for (auto it = vec.begin(); it != vec.end();) {
-    // Check contents
+  if (this->requireContent == true) {
+    for (auto it = vec.begin(); it != vec.end();) {
+      // Check contents
 
-    if (!testFsHelper.checkContentsIsEmpty(*it)) {
+      if (!testFsHelper.checkContentsIsEmpty(*it)) {
 
-      // remove paths that lead to testing dir/files with contents
+        // remove paths that lead to testing dir/files with contents
 
-      it = vec.erase(it);
+        it = vec.erase(it);
+        countValidTestFiles++;
 
-    } else {
-      it++;
+      } else {
+        it++;
+      }
     }
+
+    // make determinations
+
+    if (vec.empty()) {
+      /* all paths had contents */
+
+      this->Indication = GREEN;
+      this->IndicationReason = "No issues detected";
+      return;
+    }
+
+    // Some paths were empty
+
+    this->Indication = YELLOW;
+    this->IndicationReason = "These testing entries lacked content";
   }
 
-  // make determinations
-
-  if (vec.empty()) {
-    /* all paths had contents */
-
-    this->Indication = GREEN;
-    this->IndicationReason = "No issues detected";
+  if (allowMultiple == false && countValidTestFiles > 1) {
+    // check if several --> yellow
+    this->Indication = YELLOW;
+    this->IndicationReason = "Several test files were found";
     return;
   }
-
-  // Some paths were empty
-
-  this->Indication = YELLOW;
-  this->IndicationReason = "These testing entries lacked content";
 }
 
 void testEntry::printEntry() { parentPrintEntry(); }

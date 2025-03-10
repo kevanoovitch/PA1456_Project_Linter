@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "fileManager.h"
 #include <fstream>
+#include <iostream>
 
 using namespace constants;
 
@@ -13,8 +14,8 @@ configHandler::configHandler(/* args */) {}
 
 configHandler::~configHandler() {}
 
-void configHandler::openAndSetConfigFile() {
-  std::ifstream file(PATH_CONFIG);
+void configHandler::openAndSetConfigFile(std::string path) {
+  std::ifstream file(path);
   if (!file) {
     std::cerr << "Failed to open config JSON output." << std::endl;
     return;
@@ -50,9 +51,9 @@ void configHandler::readFileReq(std::string file, std::string key,
   }
 }
 
-void configHandler::configure() {
+void configHandler::configure(std::string path) {
 
-  openAndSetConfigFile();
+  openAndSetConfigFile(path);
 
   this->readDstPath();
   this->readIndicationParams();
@@ -84,8 +85,8 @@ void configHandler::readIndicationParams() {
   std::vector<std::string> files = {README, LICENSE, GIT_IGNORE, TEST_STRING,
                                     WORKFLOW_STRING};
 
-  std::vector<std::string> keys = {"required", "allowMultiple",
-                                   "requiresContent"};
+  std::vector<std::string> keys = {"required", "requiresContent",
+                                   "allowMultiple"};
 
   for (auto file : files) {
 

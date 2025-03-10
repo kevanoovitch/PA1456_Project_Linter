@@ -20,10 +20,11 @@ protected:
   resultInterpreter *theResult = nullptr;
   configHandler config;
 
+  virtual void configureTest() { config.configure(CONFIG_DEFAULT); }
+
   void SetUp() override {
 
-    // Read the configFile
-    config.configure();
+    configureTest();
 
     // Reset file system before each test
     filesys.clearDir(REPOSITORY_PATH);
@@ -65,11 +66,18 @@ protected:
 
 class LinterTestPasses : public LinterTest {}; // Test fixture for passing cases
 class LinterTestFails : public LinterTest {};  // Test fixture for failing cases
+class LinterTestNoScan : public LinterTest {
+protected:
+  void configureTest() override { config.configure(CONFIG_NO_SCAN); }
+};
 
 INSTANTIATE_TEST_SUITE_P(PassesAllTest, LinterTestPasses,
                          ::testing::Values(FOLDER_DUMMY_ALL));
 
 INSTANTIATE_TEST_SUITE_P(FailsAllTest, LinterTestFails,
+                         ::testing::Values(FOLDER_DUMMY_NONE));
+
+INSTANTIATE_TEST_SUITE_P(NoScanTest, LinterTestNoScan,
                          ::testing::Values(FOLDER_DUMMY_NONE));
 
 TEST_P(LinterTestPasses, PassesAll) {
@@ -89,7 +97,25 @@ TEST_P(LinterTestFails, FailsAllTest) {
 
   for (auto &it : theResult->AllResultEntries) {
     EXPECT_EQ(it->Indication, RED)
-        << "❌ [FailsAll] Failed for entry: " << it->entryName << "\n"
+        << "❌' [FailsAll] Failed for entry: " << it->entryName << "\n"
         << "Reason: " << it->IndicationReason;
+  }
+}
+
+TEST_P(LinterTestNoScan, NoScanTest) {
+  std::string useCase = GetParam();
+  std::cout << "[ScanForNothing] Testing use case: " << useCase << std::endl;
+
+  for (auto &it : theResult->AllResultEntries) {
+
+    if (it->entryName != LEAK_STRING) {
+      EXPECT_EQ(it->Indication, WHITE)
+          << "[ScanForNothing] Failed for entry: " << it->entryName << "\n"
+          << "Reason: " << it->IndicationReason;
+    } else {
+      EXPECT_EQ(it->Indication, RED)
+          << "[ScanForNothing] Failed for entry: " << it->entryName << "\n"
+          << "Reason: " << it->IndicationReason;
+    }
   }
 }

@@ -1,7 +1,9 @@
 
+#include "constants.h"
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
+using namespace constants;
 
 struct fileParams {
 
@@ -22,11 +24,11 @@ private:
   void readConfig(std::string key, std::string &targetValue);
   void readDstPath();
   void readIndicationParams();
-  void openAndSetConfigFile();
+  void openAndSetConfigFile(std::string path);
   void readFileReq(std::string file, std::string key, bool &targetValue);
 
 public:
   configHandler(/* args */);
   ~configHandler();
-  void configure();
+  void configure(std::string path = PATH_CONFIG);
 };

@@ -27,8 +27,8 @@ RUN git clone https://github.com/libgit2/libgit2.git . && \
 WORKDIR /app
 
 # Clone the repo (or use COPY if building locally)
-#RUN git clone https://github.com/kevanoovitch/-PA1456-Project-Linter.git LinterRepo
-RUN git clone --branch feature/gitignore-exclusion https://github.com/kevanoovitch/-PA1456-Project-Linter.git LinterRepo
+RUN git clone https://github.com/kevanoovitch/-PA1456-Project-Linter.git LinterRepo
+#RUN git clone --branch feature/gitignore-exclusion https://github.com/kevanoovitch/-PA1456-Project-Linter.git LinterRepo
 
 # Build the project
 WORKDIR /app/LinterRepo
