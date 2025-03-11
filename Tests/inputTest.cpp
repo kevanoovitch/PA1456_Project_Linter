@@ -99,7 +99,7 @@ TEST(typeURL, URLhandling) {
 TEST(typeFolder, folderHandling) {
   inputHandler handler1;
   fileManager filesys;
-  handler1.pickStrategy(FOLDER_ABSOLUTE_REPO_TIMER_APP);
+  handler1.pickStrategy(FOLDER_DUMMY_ALL);
 
   ASSERT_EQ(typeid(*(handler1.inputStrategy)),
             typeid(typeFolder)) // returns true if x,x are equal type

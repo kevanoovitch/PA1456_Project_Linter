@@ -15,13 +15,13 @@ int main() {
 
   git_libgit2_init();
 
-  std::string userInput;
-  inputHandler userInputHandler;
-  fileManager filesys;
-
   configHandler config;
 
   config.configure();
+
+  std::string userInput;
+  inputHandler userInputHandler;
+  fileManager filesys;
 
   std::cout << "Welcome to the Linter prototype" << std::endl;
   std::cout << "Please input an URL or a absolute Path to a GitHub repositoy "
@@ -41,6 +41,11 @@ int main() {
 
   userInputHandler.executeStrategy();
 
+  if (userInputHandler.getProcessSuccess() == false) {
+    std::cerr
+        << "❌ Error: cloning or git-initation failed failed. Aborting.\n";
+    return 1; // failed init or cloning
+  }
   // Scanning
 
   Scanner theScanner(userInputHandler);

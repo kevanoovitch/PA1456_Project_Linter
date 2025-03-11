@@ -1,4 +1,5 @@
 #include "scanner.h"
+#include "configHandler.h"
 #include "constants.h"
 #include "fileManager.h"
 #include "inputHandler.h"
@@ -12,6 +13,9 @@ using namespace CommonSearchTerms;
 TEST(ScannerOperations, findRequiredFiles) {
 
   // Setup Test Environment
+
+  configHandler config;
+  config.configure(CONFIG_DEFAULT);
 
   inputHandler handler;
   fileManager filesys;
@@ -67,6 +71,8 @@ TEST(ScannerOperations, findRequiredFiles) {
 TEST(ScannerOperations, dontfindRequiredFiles) {
 
   // Setup Test Environment
+  configHandler config;
+  config.configure(CONFIG_DEFAULT);
 
   inputHandler handler;
   fileManager filesys;
@@ -128,6 +134,8 @@ TEST(ScannerOperations, dontfindRequiredFiles) {
 TEST(ScannerGitOperations, findGitAtributes) {
 
   // Setup Test Environment
+  configHandler config;
+  config.configure(CONFIG_DEFAULT);
 
   inputHandler handler;
   fileManager filesys;

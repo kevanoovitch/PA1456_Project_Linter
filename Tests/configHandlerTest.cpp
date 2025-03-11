@@ -2,10 +2,12 @@
 #include "constants.h"
 #include "fstream"
 #include "scanner.h"
+#include "testArgs.h"
 #include <gtest/gtest.h>
 #include <nlohmann/json.hpp>
 
 using namespace constants;
+using namespace TestArgs;
 
 TEST(ConfigTest, NewRepoFolder) {
 
@@ -15,7 +17,7 @@ TEST(ConfigTest, NewRepoFolder) {
 
   std::string newPath;
 
-  config.configure();
+  config.configure(CONFIG_DEFAULT);
 
   newPath = REPOSITORY_PATH;
 

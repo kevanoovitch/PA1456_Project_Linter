@@ -51,6 +51,7 @@ public:
   std::string getInput();
   Strategy *getStrategyPtr();
   std::string localPath;
+  bool getProcessSuccess();
 
   std::shared_ptr<scanResults> sharedResult = std::make_shared<scanResults>();
 

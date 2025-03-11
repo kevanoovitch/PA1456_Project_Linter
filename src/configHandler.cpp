@@ -3,6 +3,8 @@
 #include "fileManager.h"
 #include <fstream>
 #include <iostream>
+#include <limits.h>
+#include <unistd.h>
 
 using namespace constants;
 
@@ -21,6 +23,7 @@ configHandler::configHandler(/* args */) {}
 configHandler::~configHandler() {}
 
 void configHandler::openAndSetConfigFile(std::string path) {
+
   std::ifstream file(path);
   if (!file) {
     std::cerr << "Failed to open config JSON file: " + path << std::endl;

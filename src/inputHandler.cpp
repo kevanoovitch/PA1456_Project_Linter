@@ -97,6 +97,8 @@ void inputHandler::setInput(std::string in) { this->input = in; }
 
 void inputHandler::setProcessSuccess(bool flag) { this->processSuccess = flag; }
 
+bool inputHandler::getProcessSuccess() { return this->processSuccess; }
+
 void inputHandler::executeStrategy() {
 
   if (isUrl == true) {
@@ -133,12 +135,20 @@ void typeURL::proccessInput() {
 
   filesys.checkAndClear(REPOSITORY_PATH);
 
-  if (int err = git_clone(&parentInputHandler->sharedResult->repo, url.c_str(),
-                          localPath.c_str(), NULL) != 0) {
-    // error in cloning
-
+  int err = git_clone(&parentInputHandler->sharedResult->repo, url.c_str(),
+                      localPath.c_str(), NULL);
+  if (err != 0) {
+    // some failure
+    const git_error *e = git_error_last();
+    if (e) {
+      std::cerr << "Error: Cloning failed with error code " << err << ": "
+                << e->message << "\n";
+    } else {
+      std::cerr << "Error: Cloning failed with unknown error\n";
+    }
     parentInputHandler->setProcessSuccess(false);
   } else {
+    // sucess
     parentInputHandler->setProcessSuccess(true);
   }
 }
