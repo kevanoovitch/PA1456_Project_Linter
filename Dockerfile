@@ -78,6 +78,7 @@ COPY --from=builder /app/LinterRepo/Tests/dummyRepos /usr/linterApp/Tests/dummyR
 COPY --from=builder /app/LinterRepo/Tests/testConfigDefaults.json /usr/linterApp/Tests/testConfigDefaults.json
 COPY --from=builder /app/LinterRepo/Tests/testConfigNoScan.json /usr/linterApp/Tests/testConfigNoScan.json
 # Set the default command to run the program
+WORKDIR /usr/linterApp/build
 CMD ["/usr/linterApp/build/linter"]
 
 

@@ -82,6 +82,9 @@ public:
   virtual std::string getInput() = 0;
   virtual ~Strategy();
   virtual void proccessInput() = 0;
+
+protected:
+  bool handleLibGit2Error(int err);
 };
 
 /**********************************************************
@@ -109,7 +112,7 @@ public:
   typeFolder() = default;
   typeFolder(inputHandler *h);
   ~typeFolder();
-
+  bool checkOwnershipIssue(const std::string &path);
   std::string getInput() override;
   void proccessInput() override;
 

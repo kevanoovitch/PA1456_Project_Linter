@@ -15,6 +15,7 @@ public:
 
   bool checkContentsIsEmpty(std::string path);
   void ensureFolderExists(std::string path);
+  std::string copyRepoToInternal(const std::string &srcPath);
 
 private:
   std::filesystem::path stringToPath(std::string string);

@@ -1,5 +1,8 @@
 #include "inputHandler.h"
 #include "constants.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "fileManager.h"
 #include <git2.h>
@@ -118,6 +121,23 @@ std::string inputHandler::getInput() { return this->input; }
 
 Strategy::~Strategy() {}
 
+bool Strategy::handleLibGit2Error(int err) {
+  if (err != 0) {
+    // some failure
+    const git_error *e = git_error_last();
+    if (e) {
+      std::cerr << "Error: Cloning failed with error code " << err << ": "
+                << e->message << "\n";
+    } else {
+      std::cerr << "Error: Cloning failed with unknown error\n";
+    }
+    return false;
+  } else {
+    // sucess
+    return true;
+  }
+}
+
 /**********************************************************
  *                  URL Implementation                    *
  **********************************************************/
@@ -137,20 +157,10 @@ void typeURL::proccessInput() {
 
   int err = git_clone(&parentInputHandler->sharedResult->repo, url.c_str(),
                       localPath.c_str(), NULL);
-  if (err != 0) {
-    // some failure
-    const git_error *e = git_error_last();
-    if (e) {
-      std::cerr << "Error: Cloning failed with error code " << err << ": "
-                << e->message << "\n";
-    } else {
-      std::cerr << "Error: Cloning failed with unknown error\n";
-    }
-    parentInputHandler->setProcessSuccess(false);
-  } else {
-    // sucess
-    parentInputHandler->setProcessSuccess(true);
-  }
+
+  bool gotError = handleLibGit2Error(err);
+
+  parentInputHandler->setProcessSuccess(gotError);
 }
 
 /**********************************************************
@@ -163,6 +173,23 @@ typeFolder::typeFolder(inputHandler *h) { this->parentInputHandler = h; }
 
 std::string typeFolder::getInput() { return parentInputHandler->getInput(); }
 
+bool typeFolder::checkOwnershipIssue(const std::string &path) {
+  struct stat info;
+  if (stat(path.c_str(), &info) != 0) {
+    perror("stat error");
+    std::cerr << "Error: Could not stat directory\n";
+    parentInputHandler->setProcessSuccess(false);
+    return true;
+  }
+  uid_t currentUid = getuid();
+  if (info.st_uid != currentUid) {
+    std::cerr << "Ownership issue: directory is owned by UID " << info.st_uid
+              << ", but current user UID is " << currentUid << "\n";
+    return true;
+  }
+  return false;
+}
+
 void typeFolder::proccessInput() {
 
   std::string path = getInput();
@@ -174,9 +201,22 @@ void typeFolder::proccessInput() {
     return;
   }
 
+  // ensure we have the the requries rights/ownership
+
+  if (checkOwnershipIssue(path)) {
+
+    // make a copy to solve the ownership problem
+    auto tmp = filesys.copyRepoToInternal(path);
+    path = tmp;
+  }
+
   // set the repo
   int error = git_repository_init(&parentInputHandler->sharedResult->repo,
                                   path.c_str(), false);
+
+  bool gotError = handleLibGit2Error(error);
+
+  parentInputHandler->setProcessSuccess(gotError);
 
   // Need to change the scan dir
 

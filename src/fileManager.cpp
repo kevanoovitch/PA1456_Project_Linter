@@ -110,3 +110,22 @@ bool fileManager::fileIsEmpty(std::string path) {
 
   return file.peek() == std::ifstream::traits_type::eof();
 }
+
+std::string fileManager::copyRepoToInternal(const std::string &srcPath) {
+  std::filesystem::path src(srcPath);
+  std::filesystem::path dest("../tmp/localRepo");
+  try {
+    // Remove any previous copy
+    if (std::filesystem::exists(dest)) {
+      std::filesystem::remove_all(dest);
+    }
+    // Create the destination directory
+    std::filesystem::create_directories(dest);
+    // Recursively copy the directory
+    std::filesystem::copy(src, dest, std::filesystem::copy_options::recursive);
+  } catch (const std::filesystem::filesystem_error &e) {
+    std::cerr << "Filesystem error: " << e.what() << "\n";
+    return "";
+  }
+  return dest.string();
+}
