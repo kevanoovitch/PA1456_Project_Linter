@@ -104,10 +104,15 @@ make
 sudo make install
 
 ```
-
+```
+$ cd ~/PA1456_Project_Linter/
+```
 ```
 $ mkdir build && cd build 
- cmake .. 
+cmake ..
+cmake --build .
+sudo ldconfig
+./linter
 ```
 
 ### Executing program

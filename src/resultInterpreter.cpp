@@ -292,18 +292,18 @@ void readmeEntry::indicatorDeterminator() {
 
   if (this->required == true) {
     this->VerifyIfFound(README);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(README);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(README);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    if (this->Indication != YELLOW) {
-      /* If not several were found */
-      // check contents --> yellow/red
-      this->checkContents();
+    if (this->requireContent == true) {
+      if (this->Indication != YELLOW) {
+        /* If not several were found */
+        // check contents --> yellow/red
+        this->checkContents();
+      }
     }
   }
 
@@ -333,18 +333,18 @@ void licenseEntry::indicatorDeterminator() {
   if (this->required == true) {
     // check if not found --> red
     this->VerifyIfFound(LICENSE);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(LICENSE);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(LICENSE);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    if (this->Indication != YELLOW) {
-      /* If not several were found */
-      // check contents --> yellow/red
-      this->checkContents();
+    if (this->requireContent == true) {
+      if (this->Indication != YELLOW) {
+        /* If not several were found */
+        // check contents --> yellow/red
+        this->checkContents();
+      }
     }
   }
 
@@ -370,15 +370,15 @@ void workflowEntry::indicatorDeterminator() {
   if (this->required == true) {
     // check if not found --> red
     this->VerifyIfFound(WORKFLOW_STRING);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(WORKFLOW_STRING);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(WORKFLOW_STRING);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    this->checkContents();
+    if (this->requireContent == true) {
+      this->checkContents();
+    }
   }
 
   // Implicit indication
@@ -403,15 +403,15 @@ void gitignoreEntry::indicatorDeterminator() {
   if (this->required == true) {
     // check if not found --> red
     this->VerifyIfFound(WORKFLOW_STRING);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(WORKFLOW_STRING);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(WORKFLOW_STRING);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    this->checkContents();
+    if (this->requireContent == true) {
+      this->checkContents();
+    }
   }
 
   // Implicit indication
