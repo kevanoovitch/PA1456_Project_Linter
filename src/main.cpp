@@ -75,8 +75,9 @@ int main() {
     return errorStatus::statusInt;
   } else {
     theResult.printDetails();
+    std::cout << "Exit code: " << errorStatus::statusInt << std::endl;
     return errorStatus::statusInt;
   }
-
+  std::cout << "Exit code: " << errorStatus::statusInt << std::endl;
   return errorStatus::statusInt;
 }

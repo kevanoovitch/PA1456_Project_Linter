@@ -3,10 +3,10 @@
 #include "constants.h"
 #include "errorStatus.h"
 #include "git2.h"
+#include "scanner.h"
 #include <bits/stdc++.h>
 #include <fmt/core.h>
 #include <fmt/ranges.h>
-
 using namespace constants;
 
 /**********************************************************
@@ -163,7 +163,13 @@ resultEntry::resultEntry(std::shared_ptr<scanResults> res) {
 resultEntry::resultEntry() { this->Indication = WHITE; }
 
 void resultEntry::VerifyIfFound(std::string name) {
-  if (sharedResult->foundMap[name] == false) {
+
+  // paths: are paths to all files/dirs that matches the entry
+  // crossRefrencing will remove all paths that are ignored by the gitIgnore
+
+  this->handleCrossRefrence(this->paths);
+
+  if (this->paths.empty()) {
     this->Indication = RED;
     this->IndicationReason = "Was not found";
   } else {
@@ -235,6 +241,36 @@ void resultEntry::checkContents() {
   }
 }
 
+std::string resultEntry::makeRelToGitRoot(std::string absPath) {
+
+  std::filesystem::path repoRoot =
+      std::filesystem::canonical(this->sharedResult->pathToRepo);
+  std::filesystem::path absWherePath = std::filesystem::canonical(absPath);
+  std::filesystem::path relWherePath =
+      std::filesystem::relative(absWherePath, repoRoot);
+
+  return relWherePath;
+}
+
+void resultEntry::handleCrossRefrence(std::vector<std::string> &vec) {
+
+  for (auto it = vec.begin(); it != vec.end();) {
+    // Check contents
+
+    std::string pathRelativeToGit = this->makeRelToGitRoot(*it);
+
+    if (crossRefrenceIgnore(pathRelativeToGit) == true) {
+
+      // remove paths that are ignored
+
+      it = vec.erase(it);
+
+    } else {
+      it++;
+    }
+  }
+}
+
 bool resultEntry::crossRefrenceIgnore(std::string path) {
 
   auto &repo = this->sharedResult->repo;
@@ -292,18 +328,18 @@ void readmeEntry::indicatorDeterminator() {
 
   if (this->required == true) {
     this->VerifyIfFound(README);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(README);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(README);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    if (this->Indication != YELLOW) {
-      /* If not several were found */
-      // check contents --> yellow/red
-      this->checkContents();
+    if (this->requireContent == true) {
+      if (this->Indication != YELLOW) {
+        /* If not several were found */
+        // check contents --> yellow/red
+        this->checkContents();
+      }
     }
   }
 
@@ -333,18 +369,18 @@ void licenseEntry::indicatorDeterminator() {
   if (this->required == true) {
     // check if not found --> red
     this->VerifyIfFound(LICENSE);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(LICENSE);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(LICENSE);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    if (this->Indication != YELLOW) {
-      /* If not several were found */
-      // check contents --> yellow/red
-      this->checkContents();
+    if (this->requireContent == true) {
+      if (this->Indication != YELLOW) {
+        /* If not several were found */
+        // check contents --> yellow/red
+        this->checkContents();
+      }
     }
   }
 
@@ -370,15 +406,15 @@ void workflowEntry::indicatorDeterminator() {
   if (this->required == true) {
     // check if not found --> red
     this->VerifyIfFound(WORKFLOW_STRING);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(WORKFLOW_STRING);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(WORKFLOW_STRING);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    this->checkContents();
+    if (this->requireContent == true) {
+      this->checkContents();
+    }
   }
 
   // Implicit indication
@@ -401,17 +437,18 @@ void gitignoreEntry::indicatorDeterminator() {
   applyFileConfigRules();
 
   if (this->required == true) {
+
     // check if not found --> red
     this->VerifyIfFound(WORKFLOW_STRING);
-  }
 
-  if (this->allowMultiple == false) {
-    // check if several --> yellow
-    this->noMoreThanOne(WORKFLOW_STRING);
-  }
+    if (this->allowMultiple == false) {
+      // check if several --> yellow
+      this->noMoreThanOne(WORKFLOW_STRING);
+    }
 
-  if (this->requireContent == true || this->required == true) {
-    this->checkContents();
+    if (this->requireContent == true) {
+      this->checkContents();
+    }
   }
 
   // Implicit indication
@@ -493,27 +530,12 @@ void testEntry::indicatorDeterminator() {
 
   // cross refrence and remove all files that are ignore accroding to the
   // gitIgnore
+
   auto &vec = this->paths;
 
-  if (this->sharedResult->foundMap[GIT_IGNORE] == true) {
-    // Only crossRef if there is a gitIgnore
+  handleCrossRefrence(vec);
 
-    for (auto it = vec.begin(); it != vec.end();) {
-      // Check contents
-
-      if (crossRefrenceIgnore(*it) == true) {
-
-        // remove paths that are ignored
-
-        it = vec.erase(it);
-
-      } else {
-        it++;
-      }
-    }
-  }
-
-  if (sharedResult->foundMap[TEST_STRING] == false) {
+  if (vec.empty()) {
     /* No unit test found which is bad */
     this->Indication = RED;
     this->IndicationReason = "No unit tests found!";

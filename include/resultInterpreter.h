@@ -66,6 +66,8 @@ protected:
   bool crossRefrenceIgnore(std::string path);
   void implicitIndication();
   void updateError();
+  void handleCrossRefrence(std::vector<std::string> &paths);
+  std::string makeRelToGitRoot(std::string path);
 
   void applyFileConfigRules();
 };

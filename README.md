@@ -81,13 +81,38 @@ $ apt-get update && apt-get install -y \
     python3 \
     unzip \
     zlib1g-dev \
-    libssl-dev  \
-    libgit2-dev
+    libssl-dev  
+```
+```
+$ apt-get update && apt-get install -y \
+    cmake \
+    golang \
+    g++ \
+    python3 \
+    unzip \
+    zlib1g-dev \
+    libssl-dev  
 ```
 
+
+```
+$ git clone https://github.com/libgit2/libgit2.git
+cd libgit2
+mkdir build && cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local ..
+make 
+sudo make install
+
+```
+```
+$ cd ~/PA1456_Project_Linter/
+```
 ```
 $ mkdir build && cd build 
- cmake .. 
+cmake ..
+cmake --build .
+sudo ldconfig
+./linter
 ```
 
 ### Executing program

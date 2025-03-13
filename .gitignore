@@ -7,7 +7,7 @@
 
 #ignore the repository temp dir
 /Repository
-/Repository/*
+../Repository/*
 
 #ignore 
 UML_Diagrams/*.png
@@ -23,3 +23,5 @@ UML_Diagrams/out build/
 
 #ignore dummy repos since they have .git's in them
 /Tests/dummyRepos
+
+todo.mk

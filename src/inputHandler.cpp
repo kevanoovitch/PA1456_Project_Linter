@@ -160,6 +160,8 @@ void typeURL::proccessInput() {
 
   bool gotError = handleLibGit2Error(err);
 
+  parentInputHandler->sharedResult->pathToRepo = localPath;
+
   parentInputHandler->setProcessSuccess(gotError);
 }
 
@@ -211,16 +213,19 @@ void typeFolder::proccessInput() {
   }
 
   // set the repo
-  int error = git_repository_init(&parentInputHandler->sharedResult->repo,
-                                  path.c_str(), false);
+  int error = git_repository_open(&parentInputHandler->sharedResult->repo,
+                                  path.c_str());
 
   bool gotError = handleLibGit2Error(error);
+
+  parentInputHandler->sharedResult->pathToRepo = localPath;
 
   parentInputHandler->setProcessSuccess(gotError);
 
   // Need to change the scan dir
 
   parentInputHandler->localPath = path;
+  parentInputHandler->sharedResult->pathToRepo = path;
 
   WORKFLOW_PATH = path + "/.github/workflows";
 }

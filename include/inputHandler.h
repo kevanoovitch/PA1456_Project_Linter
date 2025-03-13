@@ -19,6 +19,7 @@ class Strategy; // Forward declare Strategy since we just need a pointer in
 
 struct scanResults {
   git_repository *repo;
+  std::string pathToRepo;
   std::unordered_map<std::string, bool> foundMap;
   std::unordered_map<std::string, std::vector<std::string>> pathsMap;
 
@@ -93,7 +94,6 @@ protected:
 
 class typeURL : public Strategy {
 public:
-  typeURL() = default;
   typeURL(inputHandler *h);
   ~typeURL();
 
@@ -109,7 +109,6 @@ private:
  **********************************************************/
 class typeFolder : public Strategy {
 public:
-  typeFolder() = default;
   typeFolder(inputHandler *h);
   ~typeFolder();
   bool checkOwnershipIssue(const std::string &path);
