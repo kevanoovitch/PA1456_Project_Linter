@@ -175,8 +175,6 @@ The tests clones repositories when it needs to but otherwise tests against dummy
 
 The tests uses Googletest framework. 
 
-## UMLs and C4s
+## UML
 
-![Class Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/UML_ClassOverview.uml)
-
-![C4 Containere diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/C4_Container_Diagram.uml)
+![Class Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/PA1456_Project_Linter/refs/heads/main/UML_Diagrams/UML_ClassOverview.uml)
