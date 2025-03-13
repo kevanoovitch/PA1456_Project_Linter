@@ -37,11 +37,6 @@ This repository is part of my **Software Engineering Project course**, where I a
 
 
 
-
-## Description
-
-This can either be run using docker or be manually build and run. It's designed for Linux system and is only tested against Ubuntu 22.04.
-
 ## Dependencies
 
 ### **Manually Installed Dependencies**
@@ -162,8 +157,26 @@ $ ./linter
 ```
 $ ./linterTests
 ```
+## Configuring via config file
 
-## UMLs
+The config.json makes it possible to changes certain parameters of the system. This is done by replacing 'null' with 'true' under "custom". This makes it possible to disregard certain tests if when turning of the requirment for a file the system will output a "white" indication stating that it ignored this requirment. For the other parameters it will still check but will not give a yellow indication when files lacked content. 
+
+The minimalOutput slims output to look like the image. 
+![SlimOutput Screenshot](docs/images/minimalOutput.png)
+
+
+## Description
+
+This can either be run using docker or be manually build and run. It's designed for Linux system and is only tested against Ubuntu 22.04 and lubunut 24.04.2.
+### Tests
+The project also has unit test and integration tests which can be run in docker by either opening a running the docker with a bash terminal eg. "sudo docker run -it linter-image bash" And manually running ./linterTests. 
+
+The tests clones repositories when it needs to but otherwise tests against dummy repositories. Since git doesn't allows to commit a repository that has several .git within itself they are abstracted in the dummyRepos.zip. And unzipped when building the project using unzip and CMake. This allows for most of the tests to be more independent when testing against other hosted repositories. 
+
+The tests uses Googletest framework. 
+
+## UMLs and C4s
 
 ![Class Diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/UML_ClassOverview.uml)
 
+![C4 Containere diagram](http://www.plantuml.com/plantuml/proxy?src=https://raw.githubusercontent.com/kevanoovitch/-PA1456-Project-Linter/refs/heads/main/UML_Diagrams/C4_Container_Diagram.uml)

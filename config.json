@@ -39,7 +39,7 @@
     "custom": {
         "repoPath": null,
 
-        "minimalOutput": false,
+        "minimalOutput": true,
 
         ".gitignore": {
             "required" : null,
