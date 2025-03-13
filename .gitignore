@@ -7,7 +7,7 @@
 
 #ignore the repository temp dir
 /Repository
-/Repository/*
+../Repository/*
 
 #ignore 
 UML_Diagrams/*.png
