@@ -79,7 +79,8 @@ void Scanner::scanFor(std::vector<std::string> searchAlts,
   bool foundAtleastOnce = false;
   for (int i = 0; i < searchAlts.size(); i++) {
 
-    resultVectorPaths = mySearcher->endsWithFile(this->repoPath, searchAlts[i]);
+    resultVectorPaths =
+        mySearcher->endsWithFile(sharedResult->pathToRepo, searchAlts[i]);
 
     if (resultVectorPaths.size() == 0 && foundAtleastOnce == false) {
       // no paths meaning found nothing

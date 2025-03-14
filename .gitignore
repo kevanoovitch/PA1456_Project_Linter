@@ -9,6 +9,7 @@
 /Repository
 /Repository/*
 ../Repository/*
+/Repository/gitleaksReport.json
 
 #ignore 
 UML_Diagrams/*.png

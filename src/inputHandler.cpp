@@ -226,6 +226,6 @@ void typeFolder::proccessInput() {
 
   parentInputHandler->localPath = path;
   parentInputHandler->sharedResult->pathToRepo = path;
-
+  REPOSITORY_PATH = path;
   WORKFLOW_PATH = path + "/.github/workflows";
 }
