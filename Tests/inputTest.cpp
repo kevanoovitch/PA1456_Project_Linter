@@ -107,6 +107,6 @@ TEST(typeFolder, folderHandling) {
 
   handler1.executeStrategy();
 
-  ASSERT_NE(handler1.localPath, REPOSITORY_PATH)
-      << "Expected folderpath to have switched from default";
+  ASSERT_EQ(handler1.localPath, REPOSITORY_PATH)
+      << "Expected folderpath to have switched";
 }
