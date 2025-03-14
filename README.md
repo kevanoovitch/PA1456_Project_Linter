@@ -60,14 +60,53 @@ These dependencies are automatically managed by CMake and do not require manual 
 - **nlohmann JSON Parser 3.11.2**
 
 
-### Installing
+
+
+
+### Installing and executing the program
 
 #### Using docker
+
+##### Installation
 ```
 $ snap install docker
 ```
+##### Execution
+
+```
+$ cd ~/PA1456_Project_Linter/
+```
+
+```
+$ docker build -t linter-image .
+```
+
+```
+$ sudo docker run -it linter-image 
+```
+##### Using a folder as argument in docker
+```
+$ sudo docker run -it -v <<absolute Path>>:/usr/repo linter-image bash
+```
+
+```
+$ docker build -t linter-image .
+```
+
+
+##### Running unit test in docker
+```
+$ sudo docker run -it linter-image bash
+```
+
+```
+$ ./linterTests
+```
+
 
 #### Manually using CMake
+
+##### Installation
 ```
 $ apt-get update && apt-get install -y \
     cmake \
@@ -107,44 +146,10 @@ $ mkdir build && cd build
 cmake ..
 cmake --build .
 sudo ldconfig
-./linter
 ```
-
-### Executing program
-
-#### Using docker
-```
-$ cd ~/PA1456_Project_Linter/
-```
-
-```
-$ docker build -t linter-image .
-```
-
-```
-$ sudo docker run -it linter-image 
-```
-##### Using a folder as argument in docker
-```
-$ sudo docker run -it -v <<absolute Path>>:/usr/repo linter-image bash
-```
-
-```
-$ docker build -t linter-image .
-```
+##### Execution
 
 
-##### Running unit test in docker
-```
-$ sudo docker run -it linter-image bash
-```
-
-```
-$ ./linterTests
-```
-
-
-#### Manually using CMake
 ```
 $ cd ~/PA1456_Project_Linter/build/
 ```
