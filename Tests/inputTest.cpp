@@ -18,6 +18,8 @@ TEST(fsBasics, memberTest) {
   fileManager filesys;
   std::ofstream file;
 
+  filesys.mkdir(TESTDIR_PATH);
+
   file.open(TESTDIR_PATH + "/test.txt");
   file.close();
   ASSERT_EQ(filesys.isEmpty(TESTDIR_PATH), false) << "should not be empty";

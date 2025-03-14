@@ -12,6 +12,7 @@ public:
   bool isEmpty(std::string path);
   bool dirExists(std::string path);
   bool checkValidRepoPath(std::string path);
+  void mkdir(std::string path);
 
   bool checkContentsIsEmpty(std::string path);
   void ensureFolderExists(std::string path);
@@ -22,5 +23,4 @@ private:
   bool checkIsDir(std::string path);
   bool dirIsEmpty(std::string path);
   bool fileIsEmpty(std::string path);
-  void mkdir(std::string path);
 };
